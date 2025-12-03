@@ -61,6 +61,59 @@ npm run dev
 
 O servidor de desenvolvimento normalmente ficará disponível em http://localhost:3000.
 
+## Fluxo de trabalho com Git (Git Flow)
+
+Este projeto segue um fluxo de Git estruturado para manter a qualidade do código:
+
+### Regras de branches
+
+- **`main`**: Branch de produção. Recebe PRs apenas da branch `develop`. Qualquer commit aqui deve estar pronto para produção.
+- **`develop`**: Branch de desenvolvimento. Recebe PRs das branches de feature. Periodicamente faz PR para `main`.
+- **`feature/*`**: Branches para novas features ou correções. Devem ser criadas a partir de `develop` e fazer PR de volta para `develop` quando prontas.
+
+### Processo de desenvolvimento
+
+1. **Criar uma nova branch para sua feature:**
+
+```powershell
+git checkout develop
+git pull origin develop
+git checkout -b feature/nome-da-sua-feature
+```
+
+2. **Fazer commits na sua branch:**
+
+```powershell
+git add .
+git commit -m "Descrição clara da mudança"
+git push origin feature/nome-da-sua-feature
+```
+
+3. **Abrir um Pull Request (PR):**
+   - No GitHub, abra um PR da sua branch `feature/nome-da-sua-feature` para `develop`.
+   - Descreva claramente o que foi implementado.
+   - Aguarde revisão antes de fazer merge.
+
+4. **Após aprovação:**
+   - Faça merge do PR para `develop`.
+   - Delete a branch da feature:
+
+```powershell
+git branch -d feature/nome-da-sua-feature
+git push origin --delete feature/nome-da-sua-feature
+```
+
+5. **Release para produção:**
+   - Quando `develop` estiver estável, faça um PR de `develop` para `main`.
+   - Após merge em `main`, a aplicação estará pronta para deploy em produção.
+
+### Convenção de nomes para branches
+
+Use nomes descritivos e em inglês:
+- `feature/add-user-authentication`
+- `feature/fix-checkout-bug`
+- `feature/update-homepage-design`
+
 ## Build e execução em produção
 
 1. Gerar a build de produção:
