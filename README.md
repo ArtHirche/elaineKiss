@@ -1,6 +1,6 @@
 # elaineKiss
 
-Este repositório contém a aplicação Next.js usada para o site **elaineKiss**.
+Este repositório contém a aplicação Next.js usada para a loja **elaineKiss**.
 
 Este README explica como preparar o ambiente, instalar dependências e executar o projeto em desenvolvimento e produção, com exemplos de comandos para Windows PowerShell.
 
@@ -33,7 +33,7 @@ Esses scripts podem ser executados a partir da pasta `elainekiss`.
 
 ```powershell
 # Se ainda não clonou o repo (substitua <repo-url> pelo URL real)
-git clone <repo-url>
+git clone https://github.com/ArtHirche/elaineKiss.git
 
 # Entre na pasta do projeto
 cd elainekiss
