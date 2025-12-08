@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --header-height: 64px;
 }
 
 @theme inline {
@@ -23,4 +24,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Spacer to keep page content below the fixed header */
+.headerSpacer {
+  height: var(--header-height);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 120px;
+  }
 }
