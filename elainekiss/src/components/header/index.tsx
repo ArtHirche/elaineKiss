@@ -1,57 +1,82 @@
-export function Header() {
-    return (
-        <header
-            style={{
-                width: "100%",
-                backgroundColor: "#ffffff",
-                color: "#000000",
-                padding: "15px 30px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "20px",
-                borderBottom: "1px solid #eee"
-            }}
-        >
-            <div style={{ fontSize: "22px", fontWeight: "bold", minWidth: "140px" }}>
-                Minha Loja
-            </div>
+"use client";
 
-            <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-                <input
-                    type="text"
-                    placeholder="O que você está buscando?"
-                    style={{
-                        width: "70%",
-                        maxWidth: "700px",
-                        padding: "12px 18px",
-                        borderRadius: "10px",
-                        border: "2px solid #d100d1",
-                        outline: "none",
-                        fontSize: "16px"
-                    }}
-                />
-            </div>
+import { useState, useEffect, useRef } from "react";
+import styles from "../header/hearder.module.css";
 
-            <nav
-                style={{
-                    display: "flex",
-                    gap: "25px",
-                    minWidth: "220px",
-                    justifyContent: "flex-end",
-                    fontSize: "16px"
-                }}
-            >
-                <a href="#" style={{ textDecoration: "none", color: "#000" }}>
-                    Atendimento
-                </a>
-                <a href="#" style={{ textDecoration: "none", color: "#000" }}>
-                    Minha Conta
-                </a>
-                <a href="#" style={{ textDecoration: "none", color: "#000" }}>
-                    Carrinho
-                </a>
-            </nav>
-        </header>
-    )
+export default function Page() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    function updateHeaderHeight() {
+      if (headerRef.current) {
+        const h = Math.ceil(headerRef.current.getBoundingClientRect().height);
+        document.documentElement.style.setProperty("--header-height", `${h}px`);
+      }
+    }
+
+    updateHeaderHeight();
+    window.addEventListener("resize", updateHeaderHeight);
+    return () => window.removeEventListener("resize", updateHeaderHeight);
+  }, []);
+
+  return (
+    <>
+      <header className={styles.header} ref={headerRef}>
+        <div>
+          <img className={styles.logo} src="/images/logo.svg" alt="" />
+        </div>
+        <section className={styles.sectionPesqBurg}>
+          <input
+            type="text"
+            className={styles.search}
+            placeholder="Buscar produtos..."
+          />
+
+          <button
+            className={styles.hamburger}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            ☰
+          </button>
+          
+        </section>
+
+        <div className={styles.options}>
+          <div className={styles.link}>
+            <img className={styles.link_img} src="/images/chat.svg" alt="" />
+            <a className={styles.nav_link} href="#">
+              Atendimento
+            </a>
+          </div>
+
+          <div className={styles.link}>
+            <img className={styles.link_img} src="/images/profile.svg" alt="" />
+            <a className={styles.nav_link} href="#">
+              Minha Conta
+            </a>
+          </div>
+
+          <div className={styles.link}>
+            <img className={styles.link_img} src="/images/car.svg" alt="" />
+            <a className={styles.nav_link} href="#">
+              Carrinho
+            </a>
+          </div>
+
+        </div>
+
+
+      </header>
+
+      {menuOpen && (
+        <div className={styles.mobileMenu}>
+          <span><a href="#">Atendimento</a></span>
+          <span><a href="#">Minha Conta</a></span>
+          <span><a href="#">Carrinho</a></span>
+        </div>
+      )}
+    </>
+  );
 }
+
