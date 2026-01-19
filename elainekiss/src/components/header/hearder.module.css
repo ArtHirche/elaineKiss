@@ -49,6 +49,12 @@
     gap: 10px;
 }
 
+@media (min-width: 1500px) {
+    .link_catg {
+        display: none;
+    }
+}
+
 .link_img {
     width: 34px;
     height: 34px;
@@ -147,5 +153,9 @@
     .header {
         display: flex;
         flex-direction: column;
+    }
+
+    .link_catg {
+        display:  list-item;
     }
 }

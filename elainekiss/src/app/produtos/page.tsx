@@ -1,5 +1,7 @@
 import styles from "../styles/produtos.module.css";
 
+import Link from "next/link";
+
 export default function Produtos() {
     const categorias = [
         "Aneis, Correntes e Pulseiras",
@@ -41,9 +43,6 @@ export default function Produtos() {
         { id: 10, nome: "Produto 10", preco: 29.99, imagem: "/produtos/10.jpg" },
         { id: 11, nome: "Produto 11", preco: 29.99, imagem: "/produtos/11.jpg" },
         { id: 12, nome: "Produto 12", preco: 29.99, imagem: "/produtos/12.jpg" },
-        { id: 13, nome: "Corrente", preco: 12.00, imagem: "/produtos/13.jpg" },
-        { id: 14, nome: "Anel", preco: 5.00, imagem: "/produtos/14.jpg" },
-        { id: 15, nome: "Estojo", preco: 22.00, imagem: "/produtos/15.jpg" },
     ];
 
     return (
@@ -92,21 +91,19 @@ export default function Produtos() {
 
                     <section className={styles.sectionProdutos}>
 
-                        <a href="#">
-                            <div className={styles.grid}>
-                                {produtos.map((p) => (
-                                    <div className={styles.card} key={p.id}>
-                                        <img src={p.imagem} alt={p.nome} className={styles.img} />
+                        <div className={styles.grid}>
+                            {produtos.map((p) => (
+                                <a href={`/produtos/mocks/${p.id}`} key={p.id} className={styles.card}>
+                                    <img src={p.imagem} alt={p.nome} className={styles.img} />
+                                    <p className={styles.nome}>{p.nome}</p>
+                                    <span className={styles.preco}>R$ {p.preco.toFixed(2)}</span>
+                                    <button className={styles.botaoCarrinho}>
+                                        Adicionar ao carrinho
+                                    </button>
+                                </a>
+                            ))}
+                        </div>
 
-                                        <p className={styles.nome}>{p.nome}</p>
-                                        <span className={styles.preco}>R$ {p.preco.toFixed(2)}</span>
-                                        <button className={styles.botaoCarrinho}>
-                                            Adicionar ao carrinho
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </a>
 
                     </section>
 

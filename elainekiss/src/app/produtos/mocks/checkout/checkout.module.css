@@ -1,0 +1,150 @@
+.page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 40px;
+    background: #fff;
+    color: #000000;
+}
+
+/*
+.steps {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+    color: #b40c0c;
+}
+
+.steps .active {
+    color: #000;
+    font-weight: bold;
+}
+*/
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: center;
+    gap: 40px;
+}
+
+.form {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form h1 {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.input {
+    padding: 14px;
+    border-radius: 6px;
+    border: 1px solid #000000;
+}
+
+.inputGroup {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.inputGroup div {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.checkbox {
+    font-size: 14px;
+}
+
+.continuar {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+    padding: 15px;
+    background: #d000ff;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.resumo {
+    width: 100%;
+    max-width: 400px;
+    height: 200px;
+    border: 1px solid #d000ff;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.produto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.thumb {
+    width: 50px;
+    height: 50px;
+    background: #eee;
+    border-radius: 6px;
+}
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.cupom {
+    margin-top: 20px;
+    width: 100%;
+    background: transparent;
+    border: 1px solid #d000ff;
+    color: #d000ff;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form {
+        max-width: 100%;
+    }
+
+    .inputGroup {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .inputGroup div {
+        width: 100%;
+    }
+
+    .resumo {
+        max-width: 100%;
+        width: 100%;
+    }
+}

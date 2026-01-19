@@ -31,8 +31,8 @@ export function Footer() {
             <section className={styles.section}>
 
                 <h1 className={styles.h1}>Meios de Pagamento</h1>
-                <p>Visa, Mastercard, Elo, Pix</p>
-                
+                <p>Pix</p>
+
             </section>
 
         </footer>

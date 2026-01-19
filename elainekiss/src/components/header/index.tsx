@@ -64,6 +64,12 @@ export default function Page() {
             </a>
           </div>
 
+          <div className={styles.link_catg}>
+            <a className={styles.nav_link} href="#">
+              Categorias
+            </a>
+          </div>
+
         </div>
 
 
