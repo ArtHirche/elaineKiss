@@ -1,3 +1,8 @@
+:root {
+    --back-ground: #060748;
+    --fore-ground: #FED46D; 
+}
+
 .footer {
     width: 100%;
     background-color: #cacacaff;
@@ -21,7 +26,7 @@
 }
 
 .h1 {
-    color: #d100d1;
+    color: var(--back-ground);
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 10px;

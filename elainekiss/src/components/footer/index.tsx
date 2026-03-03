@@ -31,7 +31,7 @@ export function Footer() {
             <section className={styles.section}>
 
                 <h1 className={styles.h1}>Meios de Pagamento</h1>
-                <p>Pix</p>
+                <img src="images/pix.png" alt="Meios de Pagamento"/>
 
             </section>
 

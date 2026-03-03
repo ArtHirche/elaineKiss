@@ -24,7 +24,7 @@ export default function Page() {
     <>
       <header className={styles.header} ref={headerRef}>
         <div>
-          <img className={styles.logo} src="/images/logo.svg" alt="" />
+          <img className={styles.logo} src="/images/logo.png" alt="" />
         </div>
         <section className={styles.sectionPesqBurg}>
           <input
@@ -44,7 +44,7 @@ export default function Page() {
 
         <div className={styles.options}>
           <div className={styles.link}>
-            <img className={styles.link_img} src="/images/chat.svg" alt="" />
+            <img className={styles.link_img} src="/images/help.svg" alt="" />
             <a className={styles.nav_link} href="#">
               Atendimento
             </a>
@@ -58,7 +58,7 @@ export default function Page() {
           </div>
 
           <div className={styles.link}>
-            <img className={styles.link_img} src="/images/car.svg" alt="" />
+            <img className={styles.link_img} src="/images/cart01.svg" alt="" />
             <a className={styles.nav_link} href="#">
               Carrinho
             </a>

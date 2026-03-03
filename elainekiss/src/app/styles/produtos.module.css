@@ -1,3 +1,11 @@
+:root {
+    --back-ground: #060748;
+    --back-ground-shadow: #06074863;
+    --shadow-hover: #3a3c85;
+    --fore-ground: #FED46D;
+    --fore-ground-shadow: #fed56dd8; 
+}
+
 .container {
     width: 100%;
     padding: 40px 60px;
@@ -88,9 +96,9 @@
 }
 
 .card:hover {
-    border: 1px solid #d100d1;
+    border: 1px solid var(--shadow-hover);
     transform: scale(1.1);
-    box-shadow: 0 8px 20px #d100d163;
+    box-shadow: 0 0 8px var(--back-ground);
 }
 
 .img {
@@ -105,7 +113,7 @@
 }
 
 .preco {
-    color: #d100d1;
+    color: var(--back-ground);
     font-weight: bold;
     font-size: 17px;
 }
@@ -114,7 +122,7 @@
     width: 100%;
     margin-top: 10px;
     padding: 5px;
-    background-color: #d100d1;
+    background-color: var(--back-ground);
     color: white;
     border: none;
     border-radius: 8px;
@@ -125,7 +133,7 @@
 }
 
 .botaoCarrinho:hover {
-    background-color: #a800a8;
+    background-color: var(--shadow-hover);
     transform: scale(1.03);
 }
 
