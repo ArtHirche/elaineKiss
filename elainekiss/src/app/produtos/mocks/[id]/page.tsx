@@ -43,23 +43,16 @@ export default async function ProdutoPage({ params }: PageProps) {
                             <button>+</button>
                         </div>
 
-                        <Link href={`/produtos/mocks/checkout?id=${produto.id}`}>
-                            <button className={styles.comprar}>COMPRAR</button>
-                        </Link>
-                    </div>
+                        <div className={styles.botoes_compra}>
+                            <Link href={`/produtos/mocks/checkout?id=${produto.id}`}>
+                                <button className={styles.comprar}>COMPRAR</button>
+                            </Link>
 
-                    <button className={styles.comprar_carrinho}>Adicionar ao Carrinho</button>
-
-                    <div className={styles.frete}>
-                        <strong>Meios de envio</strong>
-
-                        <div className={styles.cepBox}>
-                            <input type="number" placeholder="Seu CEP" />
-                            <button>CALCULAR</button>
+                            <button className={styles.comprar_carrinho}>Adicionar ao Carrinho</button>
                         </div>
 
-                        <a href="#">Não sei meu CEP</a>
                     </div>
+
                 </div>
 
             </section>
