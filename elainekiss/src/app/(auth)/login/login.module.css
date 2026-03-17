@@ -1,0 +1,155 @@
+/*
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 255, 255, 0.267);
+  height: 100vh;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    background-color: rgba(137, 43, 226, 0.575);
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    background-color: rgba(165, 42, 42, 0.644);
+}
+    */
+
+:root {
+    --back-ground: #060748;
+    --back-ground-shadow: #06074863;
+    --shadow-hover: #3a3c85;
+    --fore-ground: #FED46D;
+    --fore-ground-shadow: #fed56dd8; 
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(120deg, var(--back-ground), var(--back-ground-shadow), var(--fore-ground));
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* LADO DIREITO */
+
+.loginContainer {
+    flex: 1; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CAIXA DO FORM */
+
+.formBox {
+    width: 400px;
+    padding: 30px;
+    border-radius: 10px;
+    border: var(--shadow-hover) solid 2px;
+    color: white;
+    background: var(--back-ground);
+}
+
+.title {
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form label {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.input {
+    padding: 12px;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.forgot {
+    font-size: 13px;
+    color: #c7d5ff;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
+
+/* BOTÃO PRINCIPAL */
+
+.loginButton {
+    background: white;
+    color: #0f3ea8;
+    border: none;
+    padding: 14px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* SEPARADOR */
+
+.separator {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.separator span {
+    flex: 1;
+    height: 1px;
+    background: #6d8be6;
+}
+
+.separator p {
+    margin: 0 10px;
+    font-size: 14px;
+}
+
+/* BOTÕES SOCIAIS */
+
+.socialButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.socialButtons button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 20px;
+    border: 1px solid white;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+}
+
+/* TEXTO FINAL */
+
+.create {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.create a {
+    color: #c7d5ff;
+    text-decoration: none;
+}
