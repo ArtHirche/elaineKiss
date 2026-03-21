@@ -30,7 +30,7 @@ export default function Login() {
             </a>
 
             <button className={styles.loginButton}>
-              Acessar minha loja
+              Entrar
             </button>
 
             <div className={styles.separator}>
@@ -41,6 +41,7 @@ export default function Login() {
 
             <div className={styles.socialButtons}>
               <button className={styles.google}>
+                <img src="/images/google.png" alt="Google" className={styles.googleIcon} />
                 Acessar com Google
               </button>
             </div>
@@ -48,7 +49,7 @@ export default function Login() {
           </form>
 
           <p className={styles.create}>
-            Ainda não tem uma loja? <a href="#">Criar agora</a>
+            Ainda não tem uma conta? <a href="#">Criar agora</a>
           </p>
 
         </div>
