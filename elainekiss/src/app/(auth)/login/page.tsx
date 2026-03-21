@@ -1,32 +1,3 @@
-/*
-import styles from './login.module.css';
-
-export default function Login() {
-  return (
-    <main>
-      <div className={styles.loginContainer}>
-        <h1>Login</h1>
-
-        <form className={styles.loginForm}>
-          <div className={styles.inputGroup}>
-            <p>Login:</p>
-            <input type="email" placeholder="Email" />
-          </div>
-
-          <div className={styles.inputGroup}>
-            <p>Senha:</p>
-            <input type="password" placeholder="Senha" />
-          </div>
-
-          <button type="submit">Entrar</button>
-        </form>
-      </div>
-
-    </main>
-  );
-}
-*/
-
 import styles from "./login.module.css";
 
 export default function Login() {
@@ -71,10 +42,6 @@ export default function Login() {
             <div className={styles.socialButtons}>
               <button className={styles.google}>
                 Acessar com Google
-              </button>
-
-              <button className={styles.apple}>
-                Acessar com Apple
               </button>
             </div>
 
