@@ -61,8 +61,16 @@
     }
 }
 
+.link_btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px;
+}
+
 .link_img {
-    width: 34px;
+    width: 64px;
     height: 34px;
     color: var(--fore-ground);
 }

@@ -1,11 +1,14 @@
 "use client";
 
+import { useCart } from "@/context/CartContext"
 import { useState, useEffect, useRef } from "react";
 import styles from "../header/hearder.module.css";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
+  const { setOpen } = useCart();
+
 
   useEffect(() => {
     function updateHeaderHeight() {
@@ -58,10 +61,12 @@ export default function Page() {
           </div>
 
           <div className={styles.link}>
-            <img className={styles.link_img} src="/images/cart01.svg" alt="" />
-            <a className={styles.nav_link} href="#">
-              Carrinho
-            </a>
+            <button className={styles.link_btn} onClick={() => setOpen(true)}>
+              <img className={styles.link_img} src="/images/cart01.svg" alt="" />
+              <a className={styles.nav_link} href="#">
+                Carrinho
+              </a>
+            </button>
           </div>
 
           <div className={styles.link_catg}>
