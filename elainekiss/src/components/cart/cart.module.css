@@ -19,12 +19,12 @@
     right: -400px;
     width: 400px;
     height: 87vh;
-    background: var(--fore-ground);
+    background: var(--back-ground);
     z-index: 999;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border-left: 2px solid var(--back-ground);
+    border-left: 2px solid var(--fore-ground);
     padding: 20px;
     transition: right 0.3s ease;
 }
@@ -47,11 +47,19 @@
     align-items: center;
     width: 100%;
     gap: 15px;
-    background: #ffffff;
+    background: #2a2a2a;
     border-radius: 12px;
     padding: 12px;
-    border: 2px solid var(--back-ground);
-    color: black;
+    border: 2px solid var(--fore-ground);
+    color: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.item:hover {
+    background: #3a3a3a;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(254, 212, 109, 0.3);
 }
 
 .thumb {
@@ -69,12 +77,12 @@
 
 .nome {
     font-size: 16px;
-    color: #1c1c1c;
+    color: #ffffff;
 }
 
 .preco {
     font-size: 14px;
-    color: #333;
+    color: #ffffff;
 }
 
 .footer {
@@ -83,9 +91,9 @@
 
 .buy {
     width: 100%;
-    background: #39b54a;
+    background: #1a5f1f;
     color: white;
-    border: 2px solid var(--back-ground);
+    border: 2px solid var(--fore-ground);
     padding: 15px;
     border-radius: 10px;
     font-size: 18px;
@@ -114,5 +122,5 @@
     border: none;
     font-size: 24px;
     cursor: pointer;
-    color: var(--back-ground);
+    color: var(--fore-ground);
 }

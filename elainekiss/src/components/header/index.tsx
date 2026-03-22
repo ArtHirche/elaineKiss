@@ -2,12 +2,15 @@
 
 import { useCart } from "@/context/CartContext"
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "../header/hearder.module.css";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
   const { setOpen } = useCart();
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -55,9 +58,18 @@ export default function Page() {
 
           <div className={styles.link}>
             <img className={styles.link_img} src="/images/profile.svg" alt="" />
-            <a className={styles.nav_link} href="#">
-              Minha Conta
-            </a>
+            <div className={styles.nav_link}>
+              <Link 
+                href="/login" 
+                style={{textDecoration: 'none', color: 'inherit'}}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push('/login');
+                }}
+              >
+                Minha Conta
+              </Link>
+            </div>
           </div>
 
           <div className={styles.link}>
@@ -83,7 +95,18 @@ export default function Page() {
       {menuOpen && (
         <div className={styles.mobileMenu}>
           <span><a href="#">Atendimento</a></span>
-          <span><a href="#">Minha Conta</a></span>
+          <span>
+            <Link 
+              href="/login" 
+              style={{textDecoration: 'none', color: 'inherit'}}
+              onClick={(e) => {
+                e.preventDefault();
+                router.push('/login');
+              }}
+            >
+              Minha Conta
+            </Link>
+          </span>
           <span><a href="#">Carrinho</a></span>
         </div>
       )}

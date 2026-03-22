@@ -1,4 +1,5 @@
 import styles from "../footer/footer.module.css"
+import Link from "next/link"
 
 export function Footer() {
     return (
@@ -10,7 +11,9 @@ export function Footer() {
                     <h1 className={styles.h1}>Institucional</h1>
                     <p>Quem Somos</p>
                     <p>FAQ/Perguntas Frequentes</p>
-                    <p>Termos de Uso</p>
+                    <Link href="/termos" style={{textDecoration: 'none', color: 'inherit', cursor: 'pointer'}}>
+                        <p>Termos de Uso</p>
+                    </Link>
                 </div>
 
                 <div className={styles.div}>
