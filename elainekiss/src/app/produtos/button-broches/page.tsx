@@ -1,7 +1,7 @@
 import styles from "../../styles/produtos.module.css";
 import Link from "next/link";
 
-export default function Brincos() {
+export default function BolsaInfantil() {
     const categorias = [
         "Aneis, Correntes e Pulseiras",
         "Bolsa Infantil",
@@ -47,7 +47,7 @@ export default function Brincos() {
     return (
         <div className={styles.container}>
 
-            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; Brincos</div>
+            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; Button/Broches</div>
 
             <div className={styles.layout}>
 
@@ -68,9 +68,9 @@ export default function Brincos() {
 
                             return (
                                 <li key={i} className={styles.categoriaItem}>
-                                    <a href={`/produtos/${slug}`}>
+                                    <Link href={`/produtos/${slug}`}>
                                         {cat}
-                                    </a>
+                                    </Link>
                                 </li>
                             );
                         })}
@@ -90,7 +90,7 @@ export default function Brincos() {
 
                     <section className={styles.sectionProdutos}>
 
-                        <h1 className={styles.sectionTitle}>Brincos</h1>
+                        <h1 className={styles.sectionTitle}>Button/Broches</h1>
 
                         <div className={styles.separator}>
                             <span></span>

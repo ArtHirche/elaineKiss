@@ -1,3 +1,11 @@
+:root {
+    --back-ground: #060748;
+    --back-ground-shadow: #06074863;
+    --shadow-hover: #3a3c85;
+    --fore-ground: #FED46D;
+    --fore-ground-shadow: #fed56dd8; 
+}
+
 .container {
     width: 100%;
     padding: 40px 60px;
@@ -32,6 +40,76 @@
     flex-direction: column;
     padding: 0;
     columns: 3;
+}
+
+.checkboxContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.checkboxLabel:hover {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    accent-color: var(--back-ground);
+    cursor: pointer;
+}
+
+.checkboxText {
+    font-size: 15px;
+    color: #000000;
+    user-select: none;
+}
+
+.selectedInfo {
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selectedInfo span {
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.clearButton {
+    padding: 6px 12px;
+    background-color: var(--back-ground);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clearButton:hover {
+    background-color: var(--shadow-hover);
 }
 
 .categoriaItem {
@@ -71,6 +149,26 @@
     gap: 20px;
 }
 
+.sectionTitle {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--back-ground);
+    margin-bottom: 10px;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.separator span {
+  flex: 1;
+  height: 1px;
+  background: var(--back-ground);
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -88,9 +186,9 @@
 }
 
 .card:hover {
-    border: 1px solid #d100d1;
+    border: 1px solid var(--shadow-hover);
     transform: scale(1.1);
-    box-shadow: 0 8px 20px #d100d163;
+    box-shadow: 0 0 8px var(--back-ground);
 }
 
 .img {
@@ -105,7 +203,7 @@
 }
 
 .preco {
-    color: #d100d1;
+    color: var(--back-ground);
     font-weight: bold;
     font-size: 17px;
 }
@@ -114,7 +212,7 @@
     width: 100%;
     margin-top: 10px;
     padding: 5px;
-    background-color: #d100d1;
+    background-color: var(--back-ground);
     color: white;
     border: none;
     border-radius: 8px;
@@ -125,7 +223,7 @@
 }
 
 .botaoCarrinho:hover {
-    background-color: #a800a8;
+    background-color: var(--shadow-hover);
     transform: scale(1.03);
 }
 

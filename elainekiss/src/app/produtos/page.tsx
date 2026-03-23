@@ -1,6 +1,13 @@
+"use client";
+
 import styles from "../styles/produtos.module.css";
+import { useState, useEffect } from "react";
+
+import Link from "next/link";
 
 export default function Produtos() {
+    const [selectedCategorias, setSelectedCategorias] = useState<string[]>([]);
+    
     const categorias = [
         "Aneis, Correntes e Pulseiras",
         "Bolsa Infantil",
@@ -28,23 +35,32 @@ export default function Produtos() {
         "Tubetes"
     ];
 
+    const handleCategoriaChange = (categoria: string) => {
+    setSelectedCategorias(prev => 
+        prev.includes(categoria) 
+            ? prev.filter(c => c !== categoria)
+            : [...prev, categoria]
+    );
+};
+    
     const produtos = [
-        { id: 1, nome: "Produto 1", preco: 12.50, imagem: "/produtos/1.jpg" },
-        { id: 2, nome: "Produto 2", preco: 19.90, imagem: "/produtos/2.jpg" },
-        { id: 3, nome: "Produto 3", preco: 29.99, imagem: "/produtos/3.jpg" },
-        { id: 4, nome: "Produto 4", preco: 29.99, imagem: "/produtos/4.jpg" },
-        { id: 5, nome: "Produto 5", preco: 29.99, imagem: "/produtos/5.jpg" },
-        { id: 6, nome: "Produto 6", preco: 200.99, imagem: "/produtos/6.jpg" },
-        { id: 7, nome: "Produto 7", preco: 20.99, imagem: "/produtos/7.jpg" },
-        { id: 8, nome: "Produto 8", preco: 29.99, imagem: "/produtos/8.jpg" },
-        { id: 9, nome: "Produto 9", preco: 29.99, imagem: "/produtos/9.jpg" },
-        { id: 10, nome: "Produto 10", preco: 29.99, imagem: "/produtos/10.jpg" },
-        { id: 11, nome: "Produto 11", preco: 29.99, imagem: "/produtos/11.jpg" },
-        { id: 12, nome: "Produto 12", preco: 29.99, imagem: "/produtos/12.jpg" },
-        { id: 13, nome: "Corrente", preco: 12.00, imagem: "/produtos/13.jpg" },
-        { id: 14, nome: "Anel", preco: 5.00, imagem: "/produtos/14.jpg" },
-        { id: 15, nome: "Estojo", preco: 22.00, imagem: "/produtos/15.jpg" },
+        { id: 1, nome: "Produto 1", preco: 12.50, imagem: "/produtos/1.jpg", categoria: "Brincos" },
+        { id: 2, nome: "Produto 2", preco: 19.90, imagem: "/produtos/2.jpg", categoria: "Aneis, Correntes e Pulseiras" },
+        { id: 3, nome: "Produto 3", preco: 29.99, imagem: "/produtos/3.jpg", categoria: "Clips" },
+        { id: 4, nome: "Produto 4", preco: 29.99, imagem: "/produtos/4.jpg", categoria: "Chaveiros" },
+        { id: 5, nome: "Produto 5", preco: 29.99, imagem: "/produtos/5.jpg", categoria: "Bolsa Infantil" },
+        { id: 6, nome: "Produto 6", preco: 200.99, imagem: "/produtos/6.jpg", categoria: "Button/Broches" },
+        { id: 7, nome: "Produto 7", preco: 20.99, imagem: "/produtos/7.jpg", categoria: "Canetas/Lápis" },
+        { id: 8, nome: "Produto 8", preco: 29.99, imagem: "/produtos/8.jpg", categoria: "Chaveiro Crochê" },
+        { id: 9, nome: "Produto 9", preco: 29.99, imagem: "/produtos/9.jpg", categoria: "Corrente de Óculos" },
+        { id: 10, nome: "Produto 10", preco: 29.99, imagem: "/produtos/10.jpg", categoria: "Cremes/Batons" },
+        { id: 11, nome: "Produto 11", preco: 29.99, imagem: "/produtos/11.jpg", categoria: "Escova de Cabelo" },
+        { id: 12, nome: "Produto 12", preco: 29.99, imagem: "/produtos/12.jpg", categoria: "Estojo" },
     ];
+
+    const produtosFiltrados = selectedCategorias.length === 0 
+        ? produtos 
+        : produtos.filter(produto => selectedCategorias.includes(produto.categoria));
 
     return (
         <div className={styles.container}>
@@ -56,27 +72,31 @@ export default function Produtos() {
                 <aside className={styles.sidebar}>
                     <h3 className={styles.categoriasTitle}>Categorias</h3>
 
-                    <ul className={styles.categoriasLista}>
-                        {categorias.map((cat, i) => {
-
-                            const slug = cat
-                                .toLowerCase()
-                                .normalize("NFD")
-                                .replace(/[\u0300-\u036f]/g, "")
-                                .replace(/,/g, "")
-                                .replace(/\//g, "-")
-                                .replace(/ /g, "-")
-                                .replace(/[^\w-]+/g, "");
-
-                            return (
-                                <li key={i} className={styles.categoriaItem}>
-                                    <a href={`/produtos/${slug}`}>
-                                        {cat}
-                                    </a>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                    <div className={styles.checkboxContainer}>
+                        {categorias.map((cat, i) => (
+                            <label key={i} className={styles.checkboxLabel}>
+                                <input
+                                    type="checkbox"
+                                    className={styles.checkbox}
+                                    checked={selectedCategorias.includes(cat)}
+                                    onChange={() => handleCategoriaChange(cat)}
+                                />
+                                <span className={styles.checkboxText}>{cat}</span>
+                            </label>
+                        ))}
+                    </div>
+                    
+                    {selectedCategorias.length > 0 && (
+                        <div className={styles.selectedInfo}>
+                            <span>{selectedCategorias.length} categoria(s) selecionada(s)</span>
+                            <button 
+                                className={styles.clearButton}
+                                onClick={() => setSelectedCategorias([])}
+                            >
+                                Limpar
+                            </button>
+                        </div>
+                    )}
                 </aside>
 
                 <main className={styles.main}>
@@ -92,21 +112,30 @@ export default function Produtos() {
 
                     <section className={styles.sectionProdutos}>
 
-                        <a href="#">
+                        {produtosFiltrados.length === 0 ? (
+                            <div className={styles.noResults}>
+                                <p>Nenhum produto encontrado para as categorias selecionadas.</p>
+                                <button 
+                                    className={styles.clearButton}
+                                    onClick={() => setSelectedCategorias([])}
+                                >
+                                    Limpar filtros
+                                </button>
+                            </div>
+                        ) : (
                             <div className={styles.grid}>
-                                {produtos.map((p) => (
-                                    <div className={styles.card} key={p.id}>
+                                {produtosFiltrados.map((p) => (
+                                    <a href={`/produtos/mocks/${p.id}`} key={p.id} className={styles.card}>
                                         <img src={p.imagem} alt={p.nome} className={styles.img} />
-
                                         <p className={styles.nome}>{p.nome}</p>
                                         <span className={styles.preco}>R$ {p.preco.toFixed(2)}</span>
                                         <button className={styles.botaoCarrinho}>
                                             Adicionar ao carrinho
                                         </button>
-                                    </div>
+                                    </a>
                                 ))}
                             </div>
-                        </a>
+                        )}
 
                     </section>
 

@@ -1,33 +1,21 @@
+import { categorias } from "@/data/categorias";
+
+interface PageProps {
+    params: {
+        categoria: string;
+    };
+}
+
 import styles from "../../styles/produtos.module.css";
 import Link from "next/link";
 
-export default function Brincos() {
-    const categorias = [
-        "Aneis, Correntes e Pulseiras",
-        "Bolsa Infantil",
-        "Brincos",
-        "Button/Broches",
-        "Canetas/Lápis",
-        "Chaveiros",
-        "Chaveiro Crochê",
-        "Clips",
-        "Corrente de Óculos",
-        "Cremes/Batons",
-        "Escova de Cabelo",
-        "Estojo",
-        "Etiquetas",
-        "Imã de Geladeira",
-        "Marca Página",
-        "Pin Tênis e Crock",
-        "Phone Scrap",
-        "Ponteira de Lápis",
-        "Pregador de Papeis/Alimentos",
-        "Prendedor de Chupeta",
-        "Produtos de Cabelo",
-        "Roller Clips/Crachá/Bilhete",
-        "Terços e Mini Terços",
-        "Tubetes"
-    ];
+export default function CategoriaPage({ params }: PageProps) {
+    const categoria = params.categoria;
+
+
+    const categoriaAtual = categorias.find(
+        (c) => c.slug === params.categoria
+    );
 
     const produtos = [
         { id: 1, nome: "Produto 1", preco: 12.50, imagem: "/produtos/1.jpg" },
@@ -47,7 +35,7 @@ export default function Brincos() {
     return (
         <div className={styles.container}>
 
-            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; Brincos</div>
+            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; {categoriaAtual?.nome}</div>
 
             <div className={styles.layout}>
 
@@ -56,20 +44,10 @@ export default function Brincos() {
 
                     <ul className={styles.categoriasLista}>
                         {categorias.map((cat, i) => {
-
-                            const slug = cat
-                                .toLowerCase()
-                                .normalize("NFD")
-                                .replace(/[\u0300-\u036f]/g, "")
-                                .replace(/,/g, "")
-                                .replace(/\//g, "-")
-                                .replace(/ /g, "-")
-                                .replace(/[^\w-]+/g, "");
-
                             return (
                                 <li key={i} className={styles.categoriaItem}>
-                                    <a href={`/produtos/${slug}`}>
-                                        {cat}
+                                    <a href={`/produtos/${cat.slug}`}>
+                                        {cat.nome}
                                     </a>
                                 </li>
                             );
@@ -90,7 +68,7 @@ export default function Brincos() {
 
                     <section className={styles.sectionProdutos}>
 
-                        <h1 className={styles.sectionTitle}>Brincos</h1>
+                        <h1 className={styles.sectionTitle}>{categoriaAtual?.nome}</h1>
 
                         <div className={styles.separator}>
                             <span></span>

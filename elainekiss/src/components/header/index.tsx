@@ -1,11 +1,45 @@
 "use client";
 
+import { useCart } from "@/context/CartContext"
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "../header/hearder.module.css";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [categoriasDropdownOpen, setCategoriasDropdownOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
+  const { setOpen } = useCart();
+  const router = useRouter();
+
+  const categorias = [
+    "Aneis, Correntes e Pulseiras",
+    "Bolsa Infantil",
+    "Brincos",
+    "Button/Broches",
+    "Canetas/Lápis",
+    "Chaveiros",
+    "Chaveiro Crochê",
+    "Clips",
+    "Corrente de Óculos",
+    "Cremes/Batons",
+    "Escova de Cabelo",
+    "Estojo",
+    "Etiquetas",
+    "Imã de Geladeira",
+    "Marca Página",
+    "Pin Tênis e Crock",
+    "Phone Scrap",
+    "Ponteira de Lápis",
+    "Pregador de Papeis/Alimentos",
+    "Prendedor de Chupeta",
+    "Produtos de Cabelo",
+    "Roller Clips/Crachá/Bilhete",
+    "Terços e Mini Terços",
+    "Tubetes"
+  ].sort();
+
 
   useEffect(() => {
     function updateHeaderHeight() {
@@ -15,17 +49,29 @@ export default function Page() {
       }
     }
 
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Element;
+      if (!target.closest('.link_catg')) {
+        setCategoriasDropdownOpen(false);
+      }
+    }
+
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
-    return () => window.removeEventListener("resize", updateHeaderHeight);
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    return () => {
+      window.removeEventListener("resize", updateHeaderHeight);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   return (
     <>
       <header className={styles.header} ref={headerRef}>
-        <div>
-          <img className={styles.logo} src="/images/logo.svg" alt="" />
-        </div>
+        <Link href="/" style={{textDecoration: 'none', display: 'flex', alignItems: 'center'}}>
+          <img className={styles.logo} src="/images/logo.png" alt="Elaine Kiss Logo" />
+        </Link>
         <section className={styles.sectionPesqBurg}>
           <input
             type="text"
@@ -44,7 +90,7 @@ export default function Page() {
 
         <div className={styles.options}>
           <div className={styles.link}>
-            <img className={styles.link_img} src="/images/chat.svg" alt="" />
+            <img className={styles.link_img} src="/images/help.svg" alt="" />
             <a className={styles.nav_link} href="#">
               Atendimento
             </a>
@@ -52,16 +98,61 @@ export default function Page() {
 
           <div className={styles.link}>
             <img className={styles.link_img} src="/images/profile.svg" alt="" />
-            <a className={styles.nav_link} href="#">
-              Minha Conta
-            </a>
+            <div className={styles.nav_link}>
+              <Link 
+                href="/login" 
+                style={{textDecoration: 'none', color: 'inherit'}}
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push('/login');
+                }}
+              >
+                Minha Conta
+              </Link>
+            </div>
           </div>
 
           <div className={styles.link}>
-            <img className={styles.link_img} src="/images/car.svg" alt="" />
-            <a className={styles.nav_link} href="#">
-              Carrinho
-            </a>
+            <button className={styles.link_btn} onClick={() => setOpen(true)}>
+              <img className={styles.link_img} src="/images/cart01.svg" alt="" />
+              <a className={styles.nav_link} href="#">
+                Carrinho
+              </a>
+            </button>
+          </div>
+
+          <div className={styles.link_catg}>
+            <button 
+              className={styles.nav_link} 
+              onClick={() => setCategoriasDropdownOpen(!categoriasDropdownOpen)}
+            >
+              Categorias
+            </button>
+            
+            {categoriasDropdownOpen && (
+              <div className={styles.categoriasDropdown}>
+                <ul className={styles.categoriasDropdownMenu}>
+                  {categorias.map((cat, i) => {
+                    const slug = cat
+                      .toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "")
+                      .replace(/,/g, "")
+                      .replace(/\//g, "-")
+                      .replace(/ /g, "-")
+                      .replace(/[^\w-]+/g, "");
+
+                    return (
+                      <li key={i} className={styles.categoriasDropdownItem}>
+                        <Link href={`/produtos/${slug}`}>
+                          {cat}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
 
         </div>
@@ -72,7 +163,18 @@ export default function Page() {
       {menuOpen && (
         <div className={styles.mobileMenu}>
           <span><a href="#">Atendimento</a></span>
-          <span><a href="#">Minha Conta</a></span>
+          <span>
+            <Link 
+              href="/login" 
+              style={{textDecoration: 'none', color: 'inherit'}}
+              onClick={(e) => {
+                e.preventDefault();
+                router.push('/login');
+              }}
+            >
+              Minha Conta
+            </Link>
+          </span>
           <span><a href="#">Carrinho</a></span>
         </div>
       )}
