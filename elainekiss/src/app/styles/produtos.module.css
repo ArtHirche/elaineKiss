@@ -79,6 +79,26 @@
     gap: 20px;
 }
 
+.sectionTitle {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--back-ground);
+    margin-bottom: 10px;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.separator span {
+  flex: 1;
+  height: 1px;
+  background: var(--back-ground);
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
