@@ -42,6 +42,76 @@
     columns: 3;
 }
 
+.checkboxContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.checkboxLabel:hover {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    accent-color: var(--back-ground);
+    cursor: pointer;
+}
+
+.checkboxText {
+    font-size: 15px;
+    color: #000000;
+    user-select: none;
+}
+
+.selectedInfo {
+    margin-top: 16px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selectedInfo span {
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.clearButton {
+    padding: 6px 12px;
+    background-color: var(--back-ground);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clearButton:hover {
+    background-color: var(--shadow-hover);
+}
+
 .categoriaItem {
     color: #000000;
     cursor: pointer;
