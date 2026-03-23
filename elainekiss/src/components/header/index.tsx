@@ -69,9 +69,9 @@ export default function Page() {
   return (
     <>
       <header className={styles.header} ref={headerRef}>
-        <div>
-          <img className={styles.logo} src="/images/logo.png" alt="" />
-        </div>
+        <Link href="/" style={{textDecoration: 'none', display: 'flex', alignItems: 'center'}}>
+          <img className={styles.logo} src="/images/logo.png" alt="Elaine Kiss Logo" />
+        </Link>
         <section className={styles.sectionPesqBurg}>
           <input
             type="text"
