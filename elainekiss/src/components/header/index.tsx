@@ -8,9 +8,37 @@ import styles from "../header/hearder.module.css";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [categoriasDropdownOpen, setCategoriasDropdownOpen] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
   const { setOpen } = useCart();
   const router = useRouter();
+
+  const categorias = [
+    "Aneis, Correntes e Pulseiras",
+    "Bolsa Infantil",
+    "Brincos",
+    "Button/Broches",
+    "Canetas/Lápis",
+    "Chaveiros",
+    "Chaveiro Crochê",
+    "Clips",
+    "Corrente de Óculos",
+    "Cremes/Batons",
+    "Escova de Cabelo",
+    "Estojo",
+    "Etiquetas",
+    "Imã de Geladeira",
+    "Marca Página",
+    "Pin Tênis e Crock",
+    "Phone Scrap",
+    "Ponteira de Lápis",
+    "Pregador de Papeis/Alimentos",
+    "Prendedor de Chupeta",
+    "Produtos de Cabelo",
+    "Roller Clips/Crachá/Bilhete",
+    "Terços e Mini Terços",
+    "Tubetes"
+  ].sort();
 
 
   useEffect(() => {
@@ -21,17 +49,29 @@ export default function Page() {
       }
     }
 
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Element;
+      if (!target.closest('.link_catg')) {
+        setCategoriasDropdownOpen(false);
+      }
+    }
+
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
-    return () => window.removeEventListener("resize", updateHeaderHeight);
+    document.addEventListener("mousedown", handleClickOutside);
+    
+    return () => {
+      window.removeEventListener("resize", updateHeaderHeight);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   return (
     <>
       <header className={styles.header} ref={headerRef}>
-        <div>
-          <img className={styles.logo} src="/images/logo.png" alt="" />
-        </div>
+        <Link href="/" style={{textDecoration: 'none', display: 'flex', alignItems: 'center'}}>
+          <img className={styles.logo} src="/images/logo.png" alt="Elaine Kiss Logo" />
+        </Link>
         <section className={styles.sectionPesqBurg}>
           <input
             type="text"
@@ -82,9 +122,37 @@ export default function Page() {
           </div>
 
           <div className={styles.link_catg}>
-            <a className={styles.nav_link} href="#">
+            <button 
+              className={styles.nav_link} 
+              onClick={() => setCategoriasDropdownOpen(!categoriasDropdownOpen)}
+            >
               Categorias
-            </a>
+            </button>
+            
+            {categoriasDropdownOpen && (
+              <div className={styles.categoriasDropdown}>
+                <ul className={styles.categoriasDropdownMenu}>
+                  {categorias.map((cat, i) => {
+                    const slug = cat
+                      .toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "")
+                      .replace(/,/g, "")
+                      .replace(/\//g, "-")
+                      .replace(/ /g, "-")
+                      .replace(/[^\w-]+/g, "");
+
+                    return (
+                      <li key={i} className={styles.categoriasDropdownItem}>
+                        <Link href={`/produtos/${slug}`}>
+                          {cat}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
           </div>
 
         </div>

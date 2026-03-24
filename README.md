@@ -161,10 +161,6 @@ rm -Recurse -Force node_modules; rm package-lock.json -ErrorAction SilentlyConti
 
 ---
 
-Se quiser, posso adicionar um arquivo `CONTRIBUTING.md`, exemplos de `.env.example` ou instruções para deployment (Vercel, Netlify, Docker). Diga qual você prefere e eu implemento.
-
----
-
 Desenvolvido por:
 - Arthur Hirche
 - Erik David

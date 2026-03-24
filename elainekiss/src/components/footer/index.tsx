@@ -26,7 +26,21 @@ export function Footer() {
 
                 <div className={styles.div}>
                     <h1 className={styles.h1}>Redes Sociais</h1>
-                    <p>Instagram</p>
+                    <div className={styles.socialLink}>
+                        <Link 
+                            href="https://www.instagram.com/kisselainecristina/" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '8px'}}
+                        >
+                            <img 
+                                src="/images/instagram.png" 
+                                alt="Instagram" 
+                                className={styles.socialIcon}
+                            />
+                            <span>Instagram</span>
+                        </Link>
+                    </div>
                 </div>
 
             </section>
