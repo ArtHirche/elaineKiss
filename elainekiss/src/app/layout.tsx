@@ -9,6 +9,7 @@ import Header from '../components/header';
 import { Footer } from '../components/footer';
 import { CartProvider } from '../context/CartContext';
 import CartDrawer from '../components/cart/CartDrawer';
+import WhatsAppFloat from '../components/WhatsAppFloat';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,8 @@ export default function RootLayout({
           {!isAuthRoute && <Footer />}
 
           {!isAuthRoute && <CartDrawer />}
+
+          {!isAuthRoute && <WhatsAppFloat />}
         </CartProvider>
       </body>
     </html>

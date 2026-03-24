@@ -117,6 +117,9 @@ export default function Home() {
                 <p className={styles.subtitle}>
                     Acessórios únicos e artesanais com muito amor e carinho para você
                 </p>
+                <Link href="/produtos" className={styles.botaoProdutos}>
+                    Ver Todos os Produtos
+                </Link>
             </header>
 
             <main>
