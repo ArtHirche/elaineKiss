@@ -1,7 +1,7 @@
 import styles from "../../styles/produtos.module.css";
 import Link from "next/link";
 
-export default function Chaveiros() {
+export default function Clips() {
     const categorias = [
         "Aneis, Correntes e Pulseiras",
         "Bolsa Infantil",
@@ -36,13 +36,14 @@ export default function Chaveiros() {
         { id: 4, nome: "Produto 4", preco: 29.99, imagem: "/produtos/4.jpg" },
         { id: 5, nome: "Produto 5", preco: 29.99, imagem: "/produtos/5.jpg" },
         { id: 6, nome: "Produto 6", preco: 200.99, imagem: "/produtos/6.jpg" },
-        { id: 7, nome: "Produto 7", preco: 20.99, imagem: "/produtos/7.jpg" }
+        { id: 7, nome: "Produto 7", preco: 20.99, imagem: "/produtos/7.jpg" },
+        { id: 8, nome: "Produto 8", preco: 29.99, imagem: "/produtos/8.jpg" }
     ];
 
     return (
         <div className={styles.container}>
 
-            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; Chaveiros</div>
+            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; Clips</div>
 
             <div className={styles.layout}>
 
@@ -85,7 +86,7 @@ export default function Chaveiros() {
 
                     <section className={styles.sectionProdutos}>
 
-                        <h1 className={styles.sectionTitle}>Chaveiros</h1>
+                        <h1 className={styles.sectionTitle}>Clips</h1>
 
                         <div className={styles.separator}>
                             <span></span>
