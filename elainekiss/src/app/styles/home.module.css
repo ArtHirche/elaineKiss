@@ -36,6 +36,26 @@
     text-align: center;
 }
 
+.carousel {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0 60px;
+}
+
+.carouselContainer {
+    display: flex;
+    transition: transform 0.5s ease;
+    gap: 10px;
+    padding: 0 15px;
+}
+
+.carouselItem {
+    flex: 0 0 calc(25% - 30px);
+    margin: 0 15px;
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -52,6 +72,9 @@
     transition: all 0.3s ease;
     text-decoration: none;
     color: inherit;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
@@ -74,30 +97,11 @@
     color: #000;
 }
 
-.precoContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 15px;
-}
-
 .preco {
     font-size: 18px;
     font-weight: bold;
     color: #060748;
-}
-
-.precoPromocional {
-    font-size: 14px;
-    color: #e74c3c;
-    font-weight: bold;
-}
-
-.precoOriginal {
-    font-size: 14px;
-    color: #999;
-    text-decoration: line-through;
+    margin-bottom: 15px;
 }
 
 .tag {
@@ -114,11 +118,6 @@
     color: white;
 }
 
-.tagPromocao {
-    background-color: #e74c3c;
-    color: white;
-}
-
 .botaoCarrinho {
     width: 100%;
     padding: 10px;
@@ -130,6 +129,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    margin-top: auto;
 }
 
 .botaoCarrinho:hover {
@@ -137,24 +137,56 @@
     transform: scale(1.02);
 }
 
-.separator {
+.carouselButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #060748;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin: 40px 0;
+    justify-content: center;
 }
 
-.separator span {
-    flex: 1;
-    height: 2px;
-    background: #060748;
+.carouselButton:hover {
+    background-color: #3a3c85;
+    transform: translateY(-50%) scale(1.1);
 }
 
-.separator::before,
-.separator::after {
-    content: "❀";
-    font-size: 20px;
-    color: #060748;
+.carouselButton.prev {
+    left: 0px;
+}
+
+.carouselButton.next {
+    right: 0px;
+}
+
+.carouselDots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: #060748;
 }
 
 @media (max-width: 1200px) {
@@ -170,6 +202,10 @@
     
     .container {
         padding: 30px 40px;
+    }
+    
+    .carouselItem {
+        min-width: 250px;
     }
 }
 
@@ -190,6 +226,24 @@
     .sectionTitle {
         font-size: 28px;
     }
+    
+    .carouselItem {
+        min-width: 220px;
+    }
+    
+    .carouselButton {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .carouselButton.prev {
+        left: 10px;
+    }
+    
+    .carouselButton.next {
+        right: 10px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -200,5 +254,9 @@
     .card {
         max-width: 300px;
         margin: 0 auto;
+    }
+    
+    .carouselItem {
+        min-width: 200px;
     }
 }

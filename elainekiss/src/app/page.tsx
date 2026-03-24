@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import styles from "./styles/home.module.css";
 
 export default function Home() {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    
     // Produtos mockados - em um projeto real, viriam de uma API
     const produtosRecentes = [
         { 
@@ -45,82 +48,67 @@ export default function Home() {
             imagem: "/produtos/5.jpg", 
             categoria: "Bolsa Infantil",
             novo: true
-        }
-    ];
-
-    const produtosPromocao = [
+        },
         { 
             id: 6, 
             nome: "Anel Prata Fina", 
             preco: 89.90, 
-            precoOriginal: 120.00,
             imagem: "/produtos/6.jpg", 
             categoria: "Aneis, Correntes e Pulseiras",
-            promocao: true
+            novo: true
         },
         { 
             id: 7, 
             nome: "Caneta Decorada Flores", 
-            preco: 8.90, 
-            precoOriginal: 15.00,
+            preco: 15.00, 
             imagem: "/produtos/7.jpg", 
             categoria: "Canetas/Lápis",
-            promocao: true
+            novo: true
         },
         { 
             id: 8, 
             nome: "Corrente de Óculos Dourada", 
-            preco: 22.50, 
-            precoOriginal: 35.00,
+            preco: 35.00, 
             imagem: "/produtos/8.jpg", 
             categoria: "Corrente de Óculos",
-            promocao: true
-        },
-        { 
-            id: 9, 
-            nome: "Button Broche Gatinho", 
-            preco: 6.90, 
-            precoOriginal: 10.00,
-            imagem: "/produtos/9.jpg", 
-            categoria: "Button/Broches",
-            promocao: true
-        },
-        { 
-            id: 10, 
-            nome: "Estojo Escolar Disney", 
-            preco: 28.90, 
-            precoOriginal: 45.00,
-            imagem: "/produtos/10.jpg", 
-            categoria: "Estojo",
-            promocao: true
+            novo: true
         }
     ];
 
+    const itemsPerView = 4;
+    const maxIndex = Math.max(0, produtosRecentes.length - itemsPerView);
+
+    const nextSlide = () => {
+        setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+    };
+
+    const prevSlide = () => {
+        setCurrentIndex((prev) => Math.max(prev - 1, 0));
+    };
+
+    const goToSlide = (index: number) => {
+        setCurrentIndex(index);
+    };
+
     const ProdutoCard = ({ produto }: { produto: any }) => (
-        <Link href={`/produtos/mocks/${produto.id}`} className={styles.card}>
-            {produto.novo && <span className={`${styles.tag} ${styles.tagNovo}`}>NOVO</span>}
-            {produto.promocao && <span className={`${styles.tag} ${styles.tagPromocao}`}>PROMOÇÃO</span>}
-            
-            <img src={produto.imagem} alt={produto.nome} className={styles.img} />
-            
-            <h3 className={styles.nome}>{produto.nome}</h3>
-            
-            <div className={styles.precoContainer}>
-                {produto.promocao ? (
-                    <>
-                        <span className={styles.precoPromocional}>R$ {produto.preco.toFixed(2)}</span>
-                        <span className={styles.precoOriginal}>R$ {produto.precoOriginal.toFixed(2)}</span>
-                    </>
-                ) : (
-                    <span className={styles.preco}>R$ {produto.preco.toFixed(2)}</span>
-                )}
-            </div>
-            
-            <button className={styles.botaoCarrinho}>
-                Adicionar ao carrinho
-            </button>
-        </Link>
+        <div className={styles.carouselItem}>
+            <Link href={`/produtos/mocks/${produto.id}`} className={styles.card}>
+                <span className={`${styles.tag} ${styles.tagNovo}`}>NOVO</span>
+                
+                <img src={produto.imagem} alt={produto.nome} className={styles.img} />
+                
+                <h3 className={styles.nome}>{produto.nome}</h3>
+                
+                <span className={styles.preco}>R$ {produto.preco.toFixed(2)}</span>
+                
+                <button className={styles.botaoCarrinho}>
+                    Adicionar ao carrinho
+                </button>
+            </Link>
+        </div>
     );
+
+    const totalDots = Math.ceil(produtosRecentes.length / itemsPerView);
 
     return (
         <div className={styles.container}>
@@ -132,24 +120,46 @@ export default function Home() {
             </header>
 
             <main>
-                {/* Produtos Recentes */}
+                {/* Produtos Recentes em Carrossel */}
                 <section className={styles.section}>
                     <h2 className={styles.sectionTitle}>🌟 Produtos Recentes</h2>
-                    <div className={styles.grid}>
-                        {produtosRecentes.map((produto) => (
-                            <ProdutoCard key={produto.id} produto={produto} />
-                        ))}
+                    
+                    <div className={styles.carousel}>
+                        <button 
+                            className={`${styles.carouselButton} ${styles.prev}`}
+                            onClick={prevSlide}
+                            disabled={currentIndex === 0}
+                        >
+                            ‹
+                        </button>
+                        
+                        <button 
+                            className={`${styles.carouselButton} ${styles.next}`}
+                            onClick={nextSlide}
+                            disabled={currentIndex >= maxIndex}
+                        >
+                            ›
+                        </button>
+                        
+                        <div 
+                            className={styles.carouselContainer}
+                            style={{
+                                transform: `translateX(-${currentIndex * 280}px)`
+                            }}
+                        >
+                            {produtosRecentes.map((produto, index) => (
+                                <ProdutoCard key={produto.id} produto={produto} />
+                            ))}
+                        </div>
                     </div>
-                </section>
-
-                <div className={styles.separator}></div>
-
-                {/* Produtos em Promoção */}
-                <section className={styles.section}>
-                    <h2 className={styles.sectionTitle}>🔥 Ofertas Especiais</h2>
-                    <div className={styles.grid}>
-                        {produtosPromocao.map((produto) => (
-                            <ProdutoCard key={produto.id} produto={produto} />
+                    
+                    <div className={styles.carouselDots}>
+                        {Array.from({ length: totalDots }, (_, i) => (
+                            <button
+                                key={i}
+                                className={`${styles.dot} ${i === Math.floor(currentIndex / itemsPerView) ? styles.active : ''}`}
+                                onClick={() => goToSlide(i * itemsPerView)}
+                            />
                         ))}
                     </div>
                 </section>
