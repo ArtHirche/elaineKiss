@@ -9,6 +9,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
   User
 } from 'firebase/auth';
 
@@ -53,6 +54,17 @@ export function useAuth() {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email, {
+        url: 'http://localhost:3000/login',
+        handleCodeInApp: false,
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
@@ -67,6 +79,7 @@ export function useAuth() {
     login,
     loginWithGoogle,
     register,
+    resetPassword,
     logout,
   };
 }

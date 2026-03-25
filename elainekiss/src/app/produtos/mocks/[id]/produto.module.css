@@ -4,6 +4,8 @@
     --shadow-hover: #3a3c85;
     --fore-ground: #FED46D;
     --fore-ground-shadow: #fed56dd8; 
+    --comprar-zap: #25D366; 
+    --comprar-zap-hover: #128C7E;   
 }
 
 .page {
@@ -87,18 +89,27 @@
 
 .comprar {
     width: 250px;
-    background: var(--back-ground);
+    background: var(--comprar-zap);
     color: white;
     border: none;
     padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 0 10px var(--back-ground-shadow);
+    box-shadow: 0 0 10px var(--comprar-zap-hover);
     font-size: 16px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.whatsapp {
+    width: 30px;
+    height: 30px;
 }
 
 .comprar:hover {
-    background: var(--shadow-hover);
+    background: var(--comprar-zap-hover);
 }
 
 .comprar_carrinho {

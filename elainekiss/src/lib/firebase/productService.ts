@@ -18,9 +18,10 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  imageUrl?: string;
   category: string;
-  stock: number;
+  imageUrl?: string;
+  fileName?: string;
+  fileType?: string;
   isActive: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -103,10 +104,6 @@ export class ProductService {
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }
-
-  async updateStock(productId: string, newStock: number): Promise<void> {
-    await this.updateProduct(productId, { stock: newStock });
   }
 
   async deactivateProduct(productId: string): Promise<void> {
