@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "../header/hearder.module.css";
+import UserMenu from "@/components/auth/UserMenu";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -69,16 +70,7 @@ export default function Page() {
           <div className={styles.link}>
             <img className={styles.link_img} src="/images/profile.svg" alt="" />
             <div className={styles.nav_link}>
-              <Link 
-                href="/login" 
-                style={{textDecoration: 'none', color: 'inherit'}}
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push('/login');
-                }}
-              >
-                Minha Conta
-              </Link>
+              <UserMenu />
             </div>
           </div>
 
@@ -101,16 +93,7 @@ export default function Page() {
         <div className={styles.mobileMenu}>
           <span><a href="#">Atendimento</a></span>
           <span>
-            <Link 
-              href="/login" 
-              style={{textDecoration: 'none', color: 'inherit'}}
-              onClick={(e) => {
-                e.preventDefault();
-                router.push('/login');
-              }}
-            >
-              Minha Conta
-            </Link>
+            <UserMenu />
           </span>
           <span><a href="#">Carrinho</a></span>
         </div>

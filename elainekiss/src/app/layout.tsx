@@ -10,6 +10,7 @@ import { Footer } from '../components/footer';
 import { CartProvider } from '../context/CartContext';
 import CartDrawer from '../components/cart/CartDrawer';
 import WhatsAppFloat from '../components/WhatsAppFloat';
+import AuthProvider from '../components/auth/AuthProvider';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,19 +35,21 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <CartProvider>
-          {!isAuthRoute && <Header />}
+        <AuthProvider>
+          <CartProvider>
+            {!isAuthRoute && <Header />}
 
-          {!isAuthRoute && <div className="headerSpacer" />}
+            {!isAuthRoute && <div className="headerSpacer" />}
 
-          {children}
+            {children}
 
-          {!isAuthRoute && <Footer />}
+            {!isAuthRoute && <Footer />}
 
-          {!isAuthRoute && <CartDrawer />}
+            {!isAuthRoute && <CartDrawer />}
 
-          {!isAuthRoute && <WhatsAppFloat />}
-        </CartProvider>
+            {!isAuthRoute && <WhatsAppFloat />}
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );
