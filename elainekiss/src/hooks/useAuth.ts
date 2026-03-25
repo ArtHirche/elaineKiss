@@ -7,6 +7,8 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
   User
 } from 'firebase/auth';
 
@@ -26,6 +28,16 @@ export function useAuth() {
   const login = async (email: string, password: string) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
+      return result.user;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const loginWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
       return result.user;
     } catch (error) {
       throw error;
@@ -53,6 +65,7 @@ export function useAuth() {
     user,
     loading,
     login,
+    loginWithGoogle,
     register,
     logout,
   };
