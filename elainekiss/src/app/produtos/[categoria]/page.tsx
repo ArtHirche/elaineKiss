@@ -1,20 +1,19 @@
 import { categorias } from "@/data/categorias";
 
 interface PageProps {
-    params: {
+    params: Promise<{
         categoria: string;
-    };
+    }>;
 }
 
 import styles from "../../styles/produtos.module.css";
 import Link from "next/link";
 
-export default function CategoriaPage({ params }: PageProps) {
-    const categoria = params.categoria;
-
+export default async function CategoriaPage({ params }: PageProps) {
+    const { categoria } = await params;
 
     const categoriaAtual = categorias.find(
-        (c) => c.slug === params.categoria
+        (c) => c.slug === categoria
     );
 
     const produtos = [
