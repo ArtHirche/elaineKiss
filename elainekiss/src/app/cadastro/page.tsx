@@ -1,13 +1,13 @@
-import styles from "./login.module.css";
+import styles from "./cadastro.module.css";
 
-export default function Login() {
+export default function Cadastro() {
   return (
     <main className={styles.container}>
 
       <div className={styles.loginContainer}>
         <div className={styles.formBox}>
 
-          <h1 className={styles.title}>Acesse sua conta</h1>
+          <h1 className={styles.title}>Criando sua Conta</h1>
 
           <form className={styles.form}>
 
@@ -25,9 +25,12 @@ export default function Login() {
               className={styles.input}
             />
 
-            <a href="#" className={styles.forgot}>
-              Esqueci minha senha
-            </a>
+            <label>Confirmar Senha</label>
+            <input
+              type="password"
+              placeholder="Digite sua senha novamente"
+              className={styles.input}
+            />
 
             <button className={styles.loginButton}>
               Entrar
@@ -35,23 +38,15 @@ export default function Login() {
 
             <div className={styles.separator}>
               <span></span>
-              <p>ou</p>
-              <span></span>
-            </div>
-
-            <div className={styles.socialButtons}>
-              <button className={styles.google}>
-                <img src="/images/google.png" alt="Google" className={styles.googleIcon} />
-                Acessar com Google
-              </button>
             </div>
 
           </form>
 
-          <p className={styles.create}>
-            Ainda não tem uma conta? <a href="/cadastro">Criar agora</a>
-          </p>
-
+          <div className={styles.returnButton}>
+              <button className={styles.return}>
+                <a href="/login">Voltar</a> 
+              </button>
+            </div>
         </div>
       </div>
 
