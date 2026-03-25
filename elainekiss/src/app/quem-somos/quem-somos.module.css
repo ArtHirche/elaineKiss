@@ -1,0 +1,235 @@
+.container {
+  min-height: 100vh;
+  padding: 120px 20px 40px;
+  background: var(--back-ground, #060748);
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+  background: var(--fore-ground, #FED46D);
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--back-ground, #060748);
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--back-ground, #060748);
+  margin-bottom: 40px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.aboutSection {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.brandIntro {
+  text-align: center;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  border-left: 4px solid var(--back-ground, #060748);
+}
+
+.brandName {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--back-ground, #060748);
+  margin-bottom: 15px;
+}
+
+.brandDescription {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+}
+
+.personalStory {
+  padding: 30px;
+  background: rgba(6, 7, 72, 0.05);
+  border-radius: 12px;
+}
+
+.storyTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--back-ground, #060748);
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.storyContent {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.storyItem {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  border-left: 3px solid var(--back-ground, #060748);
+  transition: transform 0.2s ease;
+}
+
+.storyItem:hover {
+  transform: translateX(5px);
+}
+
+.storyText {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+}
+
+.storyText strong {
+  color: var(--back-ground, #060748);
+  font-weight: 600;
+}
+
+.valuesSection {
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+}
+
+.valuesTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--back-ground, #060748);
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.valueItem {
+  padding: 20px;
+  background: rgba(6, 7, 72, 0.05);
+  border-radius: 8px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.valueItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.valueTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--back-ground, #060748);
+  margin-bottom: 10px;
+}
+
+.valueDescription {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #333;
+  margin: 0;
+}
+
+.contactSection {
+  padding: 30px;
+  background: rgba(6, 7, 72, 0.08);
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid var(--back-ground, #060748);
+}
+
+.contactTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--back-ground, #060748);
+  margin-bottom: 15px;
+}
+
+.contactText {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 100px 15px 30px;
+  }
+  
+  .content {
+    padding: 25px;
+    border-radius: 12px;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
+  
+  .brandIntro,
+  .personalStory,
+  .valuesSection,
+  .contactSection {
+    padding: 20px;
+  }
+  
+  .brandName {
+    font-size: 1.8rem;
+  }
+  
+  .brandDescription {
+    font-size: 1rem;
+  }
+  
+  .storyTitle,
+  .valuesTitle,
+  .contactTitle {
+    font-size: 1.3rem;
+  }
+  
+  .valuesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 90px 10px 20px;
+  }
+  
+  .content {
+    padding: 20px;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+  }
+  
+  .brandIntro,
+  .personalStory,
+  .valuesSection,
+  .contactSection {
+    padding: 15px;
+  }
+  
+  .brandName {
+    font-size: 1.5rem;
+  }
+  
+  .storyItem {
+    padding: 15px;
+  }
+}

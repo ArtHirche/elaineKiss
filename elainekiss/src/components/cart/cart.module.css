@@ -1,0 +1,126 @@
+:root {
+    --back-ground: #060748;
+    --back-ground-shadow: #06074863;
+    --shadow-hover: #3a3c85;
+    --fore-ground: #FED46D;
+    --fore-ground-shadow: #fed56dd8; 
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+}
+
+.drawer {
+    position: fixed;
+    bottom: 0;
+    right: -400px;
+    width: 400px;
+    height: 87vh;
+    background: var(--back-ground);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-left: 2px solid var(--fore-ground);
+    padding: 20px;
+    transition: right 0.3s ease;
+}
+
+.open {
+    right: 0;
+}
+
+.list {
+    position: fixed;
+    top: 20%;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 12px;
+    border: 2px solid var(--fore-ground);
+    color: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.item:hover {
+    background: #3a3a3a;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(254, 212, 109, 0.3);
+}
+
+.thumb {
+    width: 70px;
+    height: 70px;
+    background: var(--shadow-hover);
+    border-radius: 10px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nome {
+    font-size: 16px;
+    color: #ffffff;
+}
+
+.preco {
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.footer {
+    margin-top: 20px;
+}
+
+.buy {
+    width: 100%;
+    background: #1a5f1f;
+    color: white;
+    border: 2px solid var(--fore-ground);
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    transition: 0.2s;
+}
+
+.buy:hover {
+    filter: brightness(0.95);
+}
+
+.icon {
+    font-size: 20px;
+}
+
+.close {
+    width: 30px;
+    display: flex;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--fore-ground);
+}
