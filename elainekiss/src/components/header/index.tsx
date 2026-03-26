@@ -9,6 +9,7 @@ import styles from "../header/hearder.module.css";
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriasDropdownOpen, setCategoriasDropdownOpen] = useState(false);
+  const [busca, setBusca] = useState("");
   const headerRef = useRef<HTMLElement | null>(null);
   const { setOpen } = useCart();
   const router = useRouter();
@@ -59,7 +60,7 @@ export default function Page() {
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
     document.addEventListener("mousedown", handleClickOutside);
-    
+
     return () => {
       window.removeEventListener("resize", updateHeaderHeight);
       document.removeEventListener("mousedown", handleClickOutside);
@@ -69,15 +70,24 @@ export default function Page() {
   return (
     <>
       <header className={styles.header} ref={headerRef}>
-        <Link href="/" style={{textDecoration: 'none', display: 'flex', alignItems: 'center'}}>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <img className={styles.logo} src="/images/logo.png" alt="Elaine Kiss Logo" />
         </Link>
-        <section className={styles.sectionPesqBurg}>
-          <input
-            type="text"
-            className={styles.search}
-            placeholder="Buscar produtos..."
-          />
+        <div className={styles.sectionPesqBurg}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              router.push(`/produtos/busca?q=${busca}`);
+            }}
+          >
+            <input
+              type="text"
+              className={styles.search}
+              placeholder="Buscar produtos..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+          </form>
 
           <button
             className={styles.hamburger}
@@ -85,8 +95,7 @@ export default function Page() {
           >
             ☰
           </button>
-          
-        </section>
+        </div>
 
         <div className={styles.options}>
           <div className={styles.link}>
@@ -99,9 +108,9 @@ export default function Page() {
           <div className={styles.link}>
             <img className={styles.link_img} src="/images/profile.svg" alt="" />
             <div className={styles.nav_link}>
-              <Link 
-                href="/login" 
-                style={{textDecoration: 'none', color: 'inherit'}}
+              <Link
+                href="/login"
+                style={{ textDecoration: 'none', color: 'inherit' }}
                 onClick={(e) => {
                   e.preventDefault();
                   router.push('/login');
@@ -122,13 +131,13 @@ export default function Page() {
           </div>
 
           <div className={styles.link_catg}>
-            <button 
-              className={styles.nav_link} 
+            <button
+              className={styles.nav_link}
               onClick={() => setCategoriasDropdownOpen(!categoriasDropdownOpen)}
             >
               Categorias
             </button>
-            
+
             {categoriasDropdownOpen && (
               <div className={styles.categoriasDropdown}>
                 <ul className={styles.categoriasDropdownMenu}>
@@ -164,9 +173,9 @@ export default function Page() {
         <div className={styles.mobileMenu}>
           <span><a href="#">Atendimento</a></span>
           <span>
-            <Link 
-              href="/login" 
-              style={{textDecoration: 'none', color: 'inherit'}}
+            <Link
+              href="/login"
+              style={{ textDecoration: 'none', color: 'inherit' }}
               onClick={(e) => {
                 e.preventDefault();
                 router.push('/login');
