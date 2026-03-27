@@ -4,15 +4,44 @@ import { useCart } from "@/context/CartContext"
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { produtos } from "../../app/produtos/mocks/data";
 import styles from "../header/hearder.module.css";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [categoriasDropdownOpen, setCategoriasDropdownOpen] = useState(false);
   const [busca, setBusca] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
   const { setOpen } = useCart();
   const router = useRouter();
+
+  // Generate suggestions based on input
+  useEffect(() => {
+    if (busca.length > 2) {
+      const filteredProducts = produtos.filter(produto =>
+        produto.nome.toLowerCase().includes(busca.toLowerCase()) ||
+        produto.categoria.toLowerCase().includes(busca.toLowerCase())
+      );
+      
+      const uniqueSuggestions: string[] = Array.from(
+        new Set(filteredProducts.map(p => p.nome))
+      ).slice(0, 5);
+      
+      setSuggestions(uniqueSuggestions);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [busca]);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setBusca(suggestion);
+    setShowSuggestions(false);
+    router.push(`/produtos/busca?q=${suggestion}`);
+  };
 
   const categorias = [
     "Aneis, Correntes e Pulseiras",
@@ -80,13 +109,31 @@ export default function Page() {
               router.push(`/produtos/busca?q=${busca}`);
             }}
           >
-            <input
-              type="text"
-              className={styles.search}
-              placeholder="Buscar produtos..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-            />
+            <div style={{ position: 'relative', width: '100%' }}>
+              <input
+                type="text"
+                className={styles.search}
+                placeholder="Buscar produtos..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+              />
+              
+              {showSuggestions && suggestions.length > 0 && (
+                <div className={styles.suggestionsDropdown}>
+                  {suggestions.map((suggestion, index) => (
+                    <div
+                      key={index}
+                      className={styles.suggestionItem}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      onMouseDown={(e) => e.preventDefault()}
+                    >
+                      {suggestion}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </form>
 
           <button

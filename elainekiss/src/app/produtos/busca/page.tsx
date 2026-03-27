@@ -1,92 +1,74 @@
+"use client";
+
+import React from "react";
 import Link from "next/link";
 import { produtos } from "../mocks/data";
 import styles from "./busca.module.css";
 
 interface Props {
-  searchParams: {
+  searchParams: Promise<{
     q: string;
-  };
+  }>;
 }
 
 export default function BuscaPage({ searchParams }: Props) {
-  const query = searchParams.q?.toLowerCase() || "";
-  
-  // Debug: Log the search params and query
-  console.log("SearchParams:", searchParams);
-  console.log("Query:", query);
-  
-  // First, check if the query matches any category
-  const categoriasUnicas = Array.from(new Set(produtos.map(p => p.categoria)));
-  console.log("Categorias disponíveis:", categoriasUnicas);
-  
-  // Find the best matching category with scoring system
-  const categoryMatches = categoriasUnicas
-    .map(categoria => {
-      const categoriaLower = categoria.toLowerCase();
-      let score = 0;
-      
-      // Exact match gets highest score
-      if (categoriaLower === query) score = 100;
-      // Starts with query gets high score
-      else if (categoriaLower.startsWith(query)) score = 80;
-      // Contains query gets medium score
-      else if (categoriaLower.includes(query)) score = 60;
-      // Check individual words
-      else {
-        const words = categoriaLower.split(' ');
-        words.forEach(word => {
-          if (word.includes(query)) {
-            score += 30;
-          }
-        });
-      }
-      
-      return { categoria, score };
-    })
-    .filter(match => match.score > 0)
-    .sort((a, b) => b.score - a.score);
-  
-  const matchedCategory = categoryMatches.length > 0 ? categoryMatches[0].categoria : null;
-  
-  console.log("Matched category:", matchedCategory);
-  
-  let produtosFiltrados;
-  let searchType = "";
-  
-  if (matchedCategory) {
-    // If query matches a category, show all products from that category
-    produtosFiltrados = produtos.filter(produto => 
-      produto.categoria.toLowerCase() === matchedCategory.toLowerCase()
+  const resolvedSearchParams = React.use(searchParams);
+  const query = resolvedSearchParams.q?.toLowerCase() || "";
+
+  // Função para normalizar texto (remove acentos)
+  const normalizeText = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  };
+
+  const normalizedQuery = normalizeText(query);
+
+  const produtosFiltrados = produtos.filter((produto) => {
+    const nome = normalizeText(produto.nome);
+    const categoria = normalizeText(produto.categoria);
+
+    return (
+      nome.includes(normalizedQuery) ||
+      categoria.includes(normalizedQuery)
     );
-    searchType = `categoria "${matchedCategory}"`;
-  } else {
-    // Otherwise, search by product name
-    produtosFiltrados = produtos.filter(produto =>
-      produto.nome.toLowerCase().includes(query)
-    );
-    searchType = `"${searchParams.q}"`;
-  }
-  
-  console.log("Produtos filtrados:", produtosFiltrados);
+  });
+
+  const searchType = `"${resolvedSearchParams.q}"`;
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Resultados da busca: {searchType}</h1>
-      
+      <h1 className={styles.title}>
+        Resultados da busca: {searchType}
+      </h1>
+
       {produtosFiltrados.length === 0 ? (
         <div className={styles.noResults}>
-          <p>Nenhum produto encontrado para "{searchParams.q}".</p>
+          <p>
+            Nenhum produto encontrado para "
+            {resolvedSearchParams.q}".
+          </p>
         </div>
       ) : (
         <div className={styles.grid}>
           {produtosFiltrados.map((produto) => (
             <div key={produto.id} className={styles.productCard}>
-              <h3 className={styles.productName}>{produto.nome}</h3>
+              <h3 className={styles.productName}>
+                {produto.nome}
+              </h3>
+
+              <img className={styles.productImage} src="#" alt={produto.nome} />
+
               <p className={styles.productCategory}>
                 {produto.categoria}
               </p>
-              <p className={styles.productPrice}>R$ {produto.preco.toFixed(2)}</p>
-              <Link 
+
+              <p className={styles.productPrice}>
+                R$ {produto.preco.toFixed(2)}
+              </p>
+
+              <Link
                 href={`/produtos/mocks/${produto.id}`}
                 className={styles.viewProductLink}
               >
