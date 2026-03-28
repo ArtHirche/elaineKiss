@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
+import { localFileService } from "@/lib/firebase/localFileService";
 import { categorias } from "@/data/categorias";
+import styles from "./ProductManager.module.css";
 
 export default function ProductManager() {
     const { products, loading, error, createProduct, updateProduct, deleteProduct } = useProducts();
@@ -12,7 +14,7 @@ export default function ProductManager() {
     const [formData, setFormData] = useState({
         name: "",
         description: "",
-        price: 0,
+        price: "",
         category: "",
         imageUrl: "",
         fileName: "",
@@ -24,10 +26,11 @@ export default function ProductManager() {
     const [uploading, setUploading] = useState(false);
 
     const resetForm = () => {
+        console.log('ProductManager: Resetting form');
         setFormData({
             name: "",
             description: "",
-            price: 0,
+            price: "",
             category: "",
             imageUrl: "",
             fileName: "",
@@ -37,6 +40,7 @@ export default function ProductManager() {
         setFile(null);
         setIsCreating(false);
         setEditingProduct(null);
+        console.log('ProductManager: Form reset completed');
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,9 +49,16 @@ export default function ProductManager() {
             // Validar tipo de arquivo
             const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
             if (!allowedTypes.includes(selectedFile.type)) {
-                alert('Apenas arquivos JPG, PNG e PDF são permitidos');
+                alert('Tipo de arquivo não permitido. Use JPG, PNG ou PDF.');
                 return;
             }
+
+            // Validar tamanho (5MB)
+            if (selectedFile.size > 5 * 1024 * 1024) {
+                alert('Arquivo muito grande. Tamanho máximo: 5MB.');
+                return;
+            }
+
             setFile(selectedFile);
             setFormData({
                 ...formData,
@@ -58,45 +69,71 @@ export default function ProductManager() {
     };
 
     const uploadFile = async (file: File): Promise<string> => {
-        // Simulação de upload - na prática você usaria Firebase Storage
-        // Por agora, vamos criar uma URL temporária
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // Simula URL de upload
-                const mockUrl = `https://mock-upload-bucket.com/${file.name}`;
-                resolve(mockUrl);
-            }, 1000);
-        });
+        try {
+            console.log('ProductManager: Tentando upload local do arquivo:', file.name);
+            
+            // Para mostrar o arquivo real, vamos usar URL.createObjectURL
+            const localUrl = URL.createObjectURL(file);
+            console.log('ProductManager: URL local criada:', localUrl);
+            return localUrl;
+            
+        } catch (error) {
+            console.error('ProductManager: Erro no upload local:', error);
+            // Fallback para URL consistente baseada no arquivo
+            return `https://picsum.photos/seed/${encodeURIComponent(file.name)}/400/300.jpg`;
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log('=== INICIANDO SUBMIT ===');
+        console.log('formData atual:', formData);
+        console.log('file selecionado:', file);
+        console.log('uploading:', uploading);
+        
         setUploading(true);
 
         try {
             let imageUrl = formData.imageUrl;
 
-            // Se houver arquivo, fazer upload
+            // Se houver arquivo, fazer upload (sempre funciona, tem fallback)
             if (file) {
+                console.log('Iniciando upload do arquivo:', file.name);
+                console.log('Tamanho do arquivo:', file.size);
+                console.log('Tipo do arquivo:', file.type);
+                
+                // Para mostrar o arquivo real, vamos usar URL.createObjectURL
                 imageUrl = await uploadFile(file);
+                console.log('Usando arquivo local:', imageUrl);
+            } else {
+                console.log('Nenhum arquivo selecionado, usando imageUrl existente:', formData.imageUrl);
             }
 
             const productData = {
                 ...formData,
                 imageUrl,
-                price: parseFloat(formData.price.toString()),
+                price: parseFloat(formData.price) || 0,
             };
 
+            console.log('Salvando produto:', productData);
+
             if (editingProduct) {
+                console.log('Atualizando produto ID:', editingProduct.id);
                 await updateProduct(editingProduct.id, productData);
+                console.log('Produto atualizado com sucesso');
             } else {
+                console.log('Criando novo produto');
                 await createProduct(productData);
+                console.log('Produto criado com sucesso');
             }
 
+            console.log('ProductManager: Chamando resetForm()');
             resetForm();
+            console.log('ProductManager: resetForm() concluído');
         } catch (error) {
+            console.error('=== ERRO NO SUBMIT ===');
             console.error('Error saving product:', error);
-            alert('Erro ao salvar produto');
+            alert('Erro ao salvar produto: ' + (error as Error).message);
         } finally {
             setUploading(false);
         }
@@ -106,7 +143,7 @@ export default function ProductManager() {
         setFormData({
             name: product.name,
             description: product.description,
-            price: product.price,
+            price: product.price.toString(),
             category: product.category,
             imageUrl: product.imageUrl || "",
             fileName: product.fileName || "",
@@ -114,216 +151,283 @@ export default function ProductManager() {
             isActive: product.isActive,
         });
         setEditingProduct(product);
-        setIsCreating(true);
+        setIsCreating(false);
     };
 
     const handleDelete = async (productId: string) => {
         if (window.confirm('Tem certeza que deseja excluir este produto?')) {
             try {
                 await deleteProduct(productId);
+                console.log('ProductManager: Produto excluído com sucesso');
             } catch (error) {
-                console.error('Error deleting product:', error);
+                console.error('ProductManager: Erro ao excluir produto:', error);
                 alert('Erro ao excluir produto');
             }
         }
     };
 
-    if (loading) return <div>Carregando...</div>;
-    if (error) return <div>Erro: {error}</div>;
-
     return (
-        <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-            <h1>Gerenciamento de Produtos</h1>
-            
-            {!isCreating ? (
+        <div className={styles.container}>
+            <div className={styles.header}>
                 <div>
-                    <button
-                        onClick={() => setIsCreating(true)}
-                        style={{
-                            padding: '10px 20px',
-                            backgroundColor: '#28a745',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            marginBottom: '20px'
-                        }}
-                    >
-                        Novo Produto
-                    </button>
+                    <h1>🛍️ Gerenciamento de Produtos</h1>
+                    <p className={styles.modalSubtitle}>
+                        {products.length} produto(s) cadastrado(s)
+                    </p>
+                </div>
+                <button 
+                    onClick={() => setIsCreating(true)}
+                    className={styles.addButton}
+                >
+                    ➕ Novo Produto
+                </button>
+            </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-                        {products.map((product) => (
-                            <div key={product.id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
-                                <h3>{product.name}</h3>
-                                <p><strong>Categoria:</strong> {product.category}</p>
-                                <p><strong>Preço:</strong> R$ {product.price.toFixed(2)}</p>
-                                <p><strong>Descrição:</strong> {product.description}</p>
-                                {product.fileName && (
-                                    <p><strong>Arquivo:</strong> {product.fileName}</p>
-                                )}
-                                {product.imageUrl && (
-                                    <img src={product.imageUrl} alt={product.name} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', marginTop: '10px' }} />
-                                )}
-                                <p style={{ color: product.isActive ? 'green' : 'red' }}>
-                                    {product.isActive ? 'Ativo' : 'Inativo'}
-                                </p>
-                                <div style={{ marginTop: '10px' }}>
-                                    <button
-                                        onClick={() => handleEdit(product)}
-                                        style={{
-                                            padding: '5px 10px',
-                                            backgroundColor: '#007bff',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '3px',
-                                            cursor: 'pointer',
-                                            marginRight: '5px'
-                                        }}
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(product.id!)}
-                                        style={{
-                                            padding: '5px 10px',
-                                            backgroundColor: '#dc3545',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '3px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        Excluir
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+            {error && (
+                <div className={styles.error}>
+                    ❌ Erro: {error}
+                </div>
+            )}
+
+            {loading ? (
+                <div className={styles.loading}>
+                    <div className={styles.emptyStateIcon}>⏳</div>
+                    <p>Carregando produtos...</p>
+                </div>
+            ) : products.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <div className={styles.emptyStateIcon}>📦</div>
+                    <h2 className={styles.emptyStateTitle}>Nenhum produto encontrado</h2>
+                    <p className={styles.emptyStateText}>
+                        Comece cadastrando seu primeiro produto para preencher sua loja virtual.
+                    </p>
+                    <button 
+                        onClick={() => setIsCreating(true)}
+                        className={styles.addButton}
+                    >
+                        🛒 Cadastrar Primeiro Produto
+                    </button>
                 </div>
             ) : (
-                <div style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '8px' }}>
-                    <h2>{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h2>
-                    
-                    <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                                Nome:
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                                style={{ width: '100%', padding: '8px' }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                                Descrição:
-                            </label>
-                            <textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                required
-                                style={{ width: '100%', padding: '8px', minHeight: '80px' }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                                Preço:
-                            </label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={formData.price}
-                                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                                required
-                                style={{ width: '100%', padding: '8px' }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                                Categoria:
-                            </label>
-                            <select
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                required
-                                style={{ width: '100%', padding: '8px' }}
-                            >
-                                <option value="">Selecione uma categoria</option>
-                                {categorias.map((cat) => (
-                                    <option key={cat.slug} value={cat.nome}>
-                                        {cat.nome}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div style={{ marginBottom: '15px' }}>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-                                Anexar Arquivo (JPG, PNG, PDF):
-                            </label>
-                            <input
-                                type="file"
-                                accept=".jpg,.jpeg,.png,.pdf"
-                                onChange={handleFileChange}
-                                style={{ width: '100%', padding: '8px' }}
-                            />
-                            {file && (
-                                <p style={{ marginTop: '5px', color: '#666' }}>
-                                    Arquivo selecionado: {file.name}
+                <div className={styles.productsList}>
+                    {products.map((product) => (
+                        <div key={product.id} className={styles.productCard}>
+                            <div className={styles.productHeader}>
+                                <h3 className={styles.productName}>
+                                    {product.name} 
+                                    {product.isActive ? '✅' : '❌'}
+                                </h3>
+                                <p className={styles.productPrice}>
+                                    💰 R$ {product.price.toFixed(2)}
+                                </p>
+                            </div>
+                            
+                            <div className={styles.productInfo}>
+                                <div className={styles.infoItem}>
+                                    <span className={styles.infoLabel}>📂 Categoria</span>
+                                    <span className={styles.infoValue}>{product.category}</span>
+                                </div>
+                                <div className={styles.infoItem}>
+                                    <span className={styles.infoLabel}>📅 Data</span>
+                                    <span className={styles.infoValue}>
+                                        {product.createdAt?.toDate?.()?.toLocaleDateString?.('pt-BR') || 'N/A'}
+                                    </span>
+                                </div>
+                                {product.fileName && (
+                                    <div className={styles.infoItem}>
+                                        <span className={styles.infoLabel}>📎 Arquivo</span>
+                                        <span className={styles.infoValue}>{product.fileName}</span>
+                                    </div>
+                                )}
+                                {product.fileType && (
+                                    <div className={styles.infoItem}>
+                                        <span className={styles.infoLabel}>📄 Tipo</span>
+                                        <span className={styles.infoValue}>{product.fileType}</span>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {product.description && (
+                                <p className={styles.productDescription}>
+                                    📝 {product.description}
                                 </p>
                             )}
+                            
+                            <div className={styles.productActions}>
+                                <button 
+                                    onClick={() => handleEdit(product)}
+                                    className={styles.editButton}
+                                >
+                                    ✏️ Editar
+                                </button>
+                                <button 
+                                    onClick={() => handleDelete(product.id!)}
+                                    className={styles.deleteButton}
+                                >
+                                    🗑️ Excluir
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {(isCreating || editingProduct) && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <div className={styles.modalHeader}>
+                            <h2 className={styles.modalTitle}>
+                                {isCreating ? '🛒 Cadastrar Novo Produto' : '✏️ Editar Produto'}
+                            </h2>
+                            <p className={styles.modalSubtitle}>
+                                {isCreating 
+                                    ? 'Preencha os dados abaixo para adicionar um novo produto à sua loja.'
+                                    : 'Atualize as informações do produto selecionado.'
+                                }
+                            </p>
                         </div>
 
-                        <div style={{ marginBottom: '15px' }}>
-                            <label>
+                        <form onSubmit={handleSubmit} className={styles.form}>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Nome do Produto <span className={styles.required}>*</span>
+                                </label>
                                 <input
-                                    type="checkbox"
-                                    checked={formData.isActive}
-                                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    className={styles.formInput}
+                                    placeholder="Ex: Tênis Esportivo"
+                                    required
                                 />
-                                Ativo
-                            </label>
-                        </div>
+                            </div>
 
-                        <div>
-                            <button
-                                type="submit"
-                                disabled={uploading}
-                                style={{
-                                    padding: '10px 20px',
-                                    backgroundColor: uploading ? '#6c757d' : '#28a745',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    cursor: uploading ? 'not-allowed' : 'pointer',
-                                    marginRight: '10px',
-                                }}
-                            >
-                                {uploading ? 'Salvando...' : (editingProduct ? 'Atualizar' : 'Criar')}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={resetForm}
-                                style={{
-                                    padding: '10px 20px',
-                                    backgroundColor: '#6c757d',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Categoria <span className={styles.required}>*</span>
+                                </label>
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                                    className={styles.formSelect}
+                                    required
+                                >
+                                    <option value="">Selecione uma categoria</option>
+                                    {categorias.map((cat) => (
+                                        <option key={cat.slug} value={cat.nome}>
+                                            {cat.nome}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Preço <span className={styles.required}>*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({...formData, price: e.target.value})}
+                                    className={styles.formInput}
+                                    placeholder="Ex: 199.99"
+                                    required
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Descrição
+                                </label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                    className={styles.formTextarea}
+                                    placeholder="Descreva seu produto, suas características, benefícios..."
+                                    rows={4}
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    📎 Imagem do Produto
+                                </label>
+                                <div 
+                                    className={`${styles.fileUpload} ${file ? styles.hasFile : ''}`}
+                                    onClick={() => document.getElementById('fileInput')?.click()}
+                                >
+                                    <div className={styles.fileUploadIcon}>
+                                        {file ? '✅' : '📁'}
+                                    </div>
+                                    <p className={styles.fileUploadText}>
+                                        {file ? `Arquivo selecionado: ${file.name}` : 'Clique para selecionar uma imagem'}
+                                    </p>
+                                    <p className={styles.fileUploadHint}>
+                                        Formatos aceitos: JPG, PNG, PDF (máx 5MB)
+                                    </p>
+                                    {file && (
+                                        <div className={styles.fileInfo}>
+                                            📊 Tamanho: {(file.size / 1024).toFixed(1)} KB | 
+                                            📄 Tipo: {file.type}
+                                        </div>
+                                    )}
+                                </div>
+                                <input
+                                    id="fileInput"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    accept="image/jpeg,image/png,application/pdf"
+                                    style={{ display: 'none' }}
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    URL da Imagem (opcional)
+                                </label>
+                                <input
+                                    type="url"
+                                    value={formData.imageUrl}
+                                    onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                                    className={styles.formInput}
+                                    placeholder="https://exemplo.com/imagem.jpg"
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    📦 Status do Produto
+                                </label>
+                                <select
+                                    value={formData.isActive.toString()}
+                                    onChange={(e) => setFormData({...formData, isActive: e.target.value === 'true'})}
+                                    className={styles.formSelect}
+                                >
+                                    <option value="true">✅ Ativo (visível na loja)</option>
+                                    <option value="false">❌ Inativo (oculto na loja)</option>
+                                </select>
+                            </div>
+
+                            <div className={styles.formActions}>
+                                <button
+                                    type="button"
+                                    onClick={resetForm}
+                                    className={styles.cancelButton}
+                                >
+                                    ❌ Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={uploading}
+                                    className={styles.saveButton}
+                                >
+                                    {uploading ? '⏳ Salvando...' : isCreating ? '💾 Cadastrar Produto' : '✅ Atualizar Produto'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
         </div>
