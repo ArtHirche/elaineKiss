@@ -18,9 +18,10 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  imageUrl?: string;
   category: string;
-  stock: number;
+  imageUrl?: string;
+  fileName?: string;
+  fileType?: string;
   isActive: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -30,28 +31,47 @@ export class ProductService {
   private productsCollection = collection(db, 'products');
 
   async createProduct(productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+    console.log('productService: Creating product', productData);
+    console.log('productService: Preparing timestamp...');
     const now = Timestamp.now();
+    console.log('productService: Timestamp created:', now);
+    
     const product: Omit<Product, 'id'> = {
       ...productData,
       createdAt: now,
       updatedAt: now,
     };
-
-    const docRef = await addDoc(this.productsCollection, product);
+    
+    console.log('productService: Product object prepared:', product);
+    console.log('productService: Calling addDoc...');
+    
+    const docRef = await addDoc(this.productsCollection, product).catch(error => {
+        console.error('productService: Erro no addDoc:', error);
+        console.error('Código:', error.code);
+        console.error('Mensagem:', error.message);
+        console.error('Detalhes completos:', JSON.stringify(error, null, 2));
+        throw error;
+    });
+    
+    console.log('productService: addDoc completed, ID:', docRef.id);
     return docRef.id;
   }
 
   async updateProduct(productId: string, updates: Partial<Omit<Product, 'id' | 'createdAt'>>): Promise<void> {
+    console.log('productService: Updating product', productId, updates);
     const productRef = doc(db, 'products', productId);
     await updateDoc(productRef, {
       ...updates,
       updatedAt: Timestamp.now(),
     });
+    console.log('productService: Product updated');
   }
 
   async deleteProduct(productId: string): Promise<void> {
+    console.log('productService: Deleting product', productId);
     const productRef = doc(db, 'products', productId);
     await deleteDoc(productRef);
+    console.log('productService: Product deleted');
   }
 
   async getProduct(productId: string): Promise<Product | null> {
@@ -69,6 +89,7 @@ export class ProductService {
   }
 
   async getAllProducts(): Promise<Product[]> {
+    console.log('productService: Fetching all products');
     const q = query(
       this.productsCollection,
       where('isActive', '==', true),
@@ -76,13 +97,21 @@ export class ProductService {
     );
     
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Product[];
+    const products: Product[] = [];
+    
+    querySnapshot.forEach((doc) => {
+      products.push({
+        id: doc.id,
+        ...doc.data()
+      } as Product);
+    });
+    
+    console.log('productService: Products fetched:', products.length);
+    return products;
   }
 
   async getProductsByCategory(category: string): Promise<Product[]> {
+    console.log('productService: Fetching products by category', category);
     const q = query(
       this.productsCollection,
       where('category', '==', category),
@@ -103,10 +132,6 @@ export class ProductService {
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }
-
-  async updateStock(productId: string, newStock: number): Promise<void> {
-    await this.updateProduct(productId, { stock: newStock });
   }
 
   async deactivateProduct(productId: string): Promise<void> {
