@@ -75,6 +75,12 @@ export default function ProdutoDetalhe({ params }: { params: Promise<{ id: strin
         }, 500);
     };
 
+    const handleWhatsAppPurchase = () => {
+        const message = `Olá, estou interessado em ${quantity} do ${produto.name}`;
+        const whatsappUrl = `https://wa.me/5511976965006?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
     const getImageSrc = (imageUrl?: string) => {
         if (!imageUrl) return "/produtos/default.jpg";
 
@@ -119,7 +125,10 @@ export default function ProdutoDetalhe({ params }: { params: Promise<{ id: strin
                         </div>
 
                         <div className={styles.botoes_compra}>
-                            <button className={styles.comprar}>
+                            <button 
+                                onClick={handleWhatsAppPurchase}
+                                className={styles.comprar}
+                            >
                                 <img className={styles.whatsapp} src="/images/whatsapp.svg" alt="WhatsApp" />
                                 COMPRAR
                             </button>

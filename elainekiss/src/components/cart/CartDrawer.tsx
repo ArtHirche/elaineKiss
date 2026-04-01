@@ -1,13 +1,28 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useProducts } from "@/hooks/useProducts";
 import styles from "./cart.module.css";
 
 export default function CartDrawer() {
     const { open, setOpen, cartItems, loading, error, removeFromCart, getTotalPrice, getTotalItems } = useCart();
+    const { products } = useProducts();
 
     const handleRemoveItem = (itemId: string) => {
         removeFromCart(itemId);
+    };
+
+    const handleWhatsAppPurchase = () => {
+        if (cartItems.length === 0) return;
+        
+        const productsList = cartItems.map(item => {
+            const product = products.find(p => p.id === item.productId);
+            return `${item.quantity} do ${product?.name || 'Produto não encontrado'}`;
+        }).join(', ');
+        
+        const message = `Olá, estou interessado em ${productsList}`;
+        const whatsappUrl = `https://wa.me/5511976965006?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
     };
 
     const totalPrice = getTotalPrice();
@@ -60,30 +75,25 @@ export default function CartDrawer() {
                     {cartItems.length === 0 ? (
                         <p>Seu carrinho está vazio</p>
                     ) : (
-                        cartItems.map((item) => (
-                            <div key={item.id} className={styles.item}>
-                                <div className={styles.thumb}></div>
-                                <div>
-                                    <p>Produto ID: {item.productId}</p>
-                                    <span>R$ {item.price.toFixed(2)}</span>
-                                    <p>Quantidade: {item.quantity}</p>
-                                    <button 
-                                        onClick={() => handleRemoveItem(item.id)}
-                                        style={{ 
-                                            background: 'red', 
-                                            color: 'white', 
-                                            border: 'none', 
-                                            padding: '4px 8px', 
-                                            borderRadius: '4px',
-                                            cursor: 'pointer',
-                                            fontSize: '12px'
-                                        }}
-                                    >
-                                        Remover
-                                    </button>
+                        cartItems.map((item) => {
+                            const product = products.find(p => p.id === item.productId);
+                            return (
+                                <div key={item.id} className={styles.item}>
+                                    <div className={styles.thumb}></div>
+                                    <div className={styles.info}>
+                                        <p className={styles.nome}>Produto: {product?.name || 'Carregando...'}</p>
+                                        <span className={styles.preco}>R$ {item.price.toFixed(2)}</span>
+                                        <p className={styles.quantidade}>Quantidade: {item.quantity}</p>
+                                        <button 
+                                            onClick={() => handleRemoveItem(item.id)}
+                                            className={styles.removeButton}
+                                        >
+                                            Remover
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
 
@@ -93,7 +103,7 @@ export default function CartDrawer() {
                             <span>Total de itens: {totalItems}</span>
                             <span>Total: R$ {totalPrice.toFixed(2)}</span>
                         </div>
-                        <button className={styles.buy}>Comprar Agora</button>
+                        <button className={styles.buy} onClick={handleWhatsAppPurchase}>Comprar Agora</button>
                     </div>
                 )}
             </div>

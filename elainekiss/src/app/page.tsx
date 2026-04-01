@@ -44,10 +44,6 @@ export default function Home() {
                 <h3 className={styles.nome}>{produto.nome}</h3>
                 
                 <span className={styles.preco}>R$ {produto.preco.toFixed(2)}</span>
-                
-                <button className={styles.botaoCarrinho}>
-                    Adicionar ao carrinho
-                </button>
             </Link>
         </div>
     );
