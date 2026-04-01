@@ -9,8 +9,12 @@ export function Footer() {
 
                 <div className={styles.div}>
                     <h1 className={styles.h1}>Institucional</h1>
-                    <p>Quem Somos</p>
-                    <p>FAQ/Perguntas Frequentes</p>
+                    <Link href="/quem-somos" style={{textDecoration: 'none', color: 'inherit', cursor: 'pointer'}}>
+                        <p>Quem Somos</p>
+                    </Link>
+                    <Link href="/faq" style={{textDecoration: 'none', color: 'inherit', cursor: 'pointer'}}>
+                        <p>FAQ/Perguntas Frequentes</p>
+                    </Link>
                     <Link href="/termos" style={{textDecoration: 'none', color: 'inherit', cursor: 'pointer'}}>
                         <p>Termos de Uso</p>
                     </Link>
@@ -18,10 +22,8 @@ export function Footer() {
 
                 <div className={styles.div}>
                     <h1 className={styles.h1}>Entre em Contato</h1>
-                    <p>5511980979540</p>
                     <p>+55 11 98097-9540</p>
                     <p>elainekiss11@hotmail.com</p>
-                    <p>São Paulo - SP</p>
                 </div>
 
                 <div className={styles.div}>

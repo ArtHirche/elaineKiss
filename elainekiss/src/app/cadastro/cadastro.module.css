@@ -142,3 +142,34 @@
 .create a:hover {
   text-decoration: underline;
 }
+
+.socialButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.google {
+  background: white;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.google:hover {
+  background: #f8f9fa;
+  border-color: #ccc;
+}
+
+.googleIcon {
+  width: 20px;
+  height: 20px;
+}

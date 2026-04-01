@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { produtos } from "../../app/produtos/mocks/data";
 import styles from "../header/hearder.module.css";
+import UserMenu from "@/components/auth/UserMenu";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -80,10 +81,7 @@ export default function Page() {
     }
 
     function handleClickOutside(event: MouseEvent) {
-      const target = event.target as Element;
-      if (!target.closest('.link_catg')) {
-        setCategoriasDropdownOpen(false);
-      }
+      // Removido - não há mais dropdown de categorias
     }
 
     updateHeaderHeight();
