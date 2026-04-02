@@ -77,7 +77,7 @@ export default function ProdutoDetalhe({ params }: { params: Promise<{ id: strin
 
     const handleWhatsAppPurchase = () => {
         const message = `Olá, estou interessado em ${quantity} do ${produto.name}`;
-        const whatsappUrl = `https://wa.me/5511976965006?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/5511980979540?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     };
 
