@@ -29,6 +29,15 @@
     transition: right 0.3s ease;
 }
 
+@media (max-width: 768px) {
+    .drawer {
+        width: 90%;
+        height: 80vh;
+        border-left: none;
+        border-top: 2px solid var(--fore-ground);
+    }
+}
+
 .open {
     right: 0;
 }

@@ -169,7 +169,7 @@ export default function Page() {
           <div className={styles.link}>
             <button className={styles.link_btn} onClick={() => setOpen(true)}>
               <img className={styles.link_img} src="/images/cart01.svg" alt="" />
-              <a className={styles.nav_link} href="#">
+              <a className={styles.nav_link} href="#" onClick={(e) => e.preventDefault()}>
                 Carrinho
               </a>
             </button>
@@ -229,7 +229,7 @@ export default function Page() {
               Minha Conta
             </Link>
           </span>
-          <span><a href="#">Carrinho</a></span>
+          <span><a href="#" onClick={(e) => { e.preventDefault(); setOpen(true); }}>Carrinho</a></span>
         </div>
       )}
     </>

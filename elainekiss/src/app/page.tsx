@@ -9,6 +9,24 @@ export default function Home() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const { products, loading } = useProducts();
     
+    // Verificar se está em mobile para ajustar o carrossel
+    const [isMobile, setIsMobile] = useState(false);
+    
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        
+        return () => {
+            window.removeEventListener('resize', checkMobile);
+        };
+    }, []);
+
+    const itemsPerView = isMobile ? 1 : 4;
+
     // Pegar apenas os 8 produtos mais recentes para o carrossel
     const produtosRecentes = products.slice(0, 8).map(product => ({
         id: product.id,
@@ -19,7 +37,6 @@ export default function Home() {
         novo: true
     }));
 
-    const itemsPerView = 4;
     const maxIndex = Math.max(0, produtosRecentes.length - itemsPerView);
 
     const nextSlide = () => {
@@ -34,8 +51,13 @@ export default function Home() {
         setCurrentIndex(index);
     };
 
-    const ProdutoCard = ({ produto }: { produto: any }) => (
-        <div className={styles.carouselItem}>
+    const ProdutoCard = ({ produto, isMobile, currentIndex, index }: { produto: any; isMobile?: boolean; currentIndex?: number; index?: number }) => (
+        <div 
+            className={styles.carouselItem}
+            style={{
+                display: isMobile ? (index === currentIndex ? 'block' : 'none') : 'block'
+            }}
+        >
             <Link href={`/produtos/${produto.id}`} className={styles.card}>
                 <span className={`${styles.tag} ${styles.tagNovo}`}>NOVO</span>
                 
@@ -97,11 +119,17 @@ export default function Home() {
                         <div 
                             className={styles.carouselContainer}
                             style={{
-                                transform: `translateX(-${currentIndex * 280}px)`
+                                transform: isMobile ? 'none' : `translateX(-${currentIndex * 330}px)`
                             }}
                         >
                             {produtosRecentes.map((produto, index) => (
-                                <ProdutoCard key={produto.id} produto={produto} />
+                                <ProdutoCard 
+                                    key={produto.id} 
+                                    produto={produto} 
+                                    isMobile={isMobile}
+                                    currentIndex={currentIndex}
+                                    index={index}
+                                />
                             ))}
                         </div>
                     </div>
