@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBG594IJhYtAz1q4VZ0GJUnfUroUpgQHq4",
@@ -16,6 +17,7 @@ console.log('Firebase config loaded');
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 // Testar conexão com Firestore
 import { collection, getDocs, query, limit } from 'firebase/firestore';
