@@ -429,6 +429,23 @@ export default function ProductManager() {
                                     <option value="false">❌ Inativo (oculto na loja)</option>
                                 </select>
                             </div>
+
+                            <div className={styles.modalActions}>
+                                <button
+                                    type="button"
+                                    onClick={resetForm}
+                                    className={styles.cancelButton}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={uploading}
+                                    className={styles.saveButton}
+                                >
+                                    {uploading ? 'Salvando...' : (isCreating ? 'Criar Produto' : 'Atualizar Produto')}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
