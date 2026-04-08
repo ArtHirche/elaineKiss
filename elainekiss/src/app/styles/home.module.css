@@ -57,22 +57,49 @@
 
 .carousel {
     position: relative;
-    max-width: 1200px;
+    width: 1200px;
     margin: 0 auto;
-    overflow: hidden;
     padding: 0 60px;
+    overflow: hidden;
 }
 
 .carouselContainer {
     display: flex;
     transition: transform 0.5s ease;
     gap: 10px;
-    padding: 0 15px;
+    padding: 0;
+    width: fit-content;
 }
 
 .carouselItem {
-    flex: 0 0 calc(25% - 30px);
+    flex: 0 0 250px;
     margin: 0 15px;
+}
+
+@media (max-width: 768px) {
+    .carousel {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 20px;
+        overflow: hidden;
+    }
+
+    .carouselContainer {
+        padding: 10px 0 0 0;
+        width: 100%;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .carouselItem {
+        flex: 0 0 auto;
+        margin: 0 auto;
+        justify-content: center;
+        min-width: 320px;
+        max-width: 320px;
+        text-align: center;
+    }
 }
 
 .grid {
@@ -215,14 +242,57 @@
 }
 
 @media (max-width: 900px) {
+    .carousel {
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    .carouselContainer {
+        padding: 0 10px;
+    }
+
+    .carouselItem {
+        flex: 0 0 calc(33.333% - 20px);
+        margin: 0 10px;
+        min-width: 200px;
+    }
+
+    .carouselButton {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .carouselButton.prev {
+        left: 5px;
+    }
+
+    .carouselButton.next {
+        right: 5px;
+    }
+
+    .title {
+        font-size: 42px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        margin: 0 auto 25px;
+    }
+
+    .botaoProdutos {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+
     .grid {
         grid-template-columns: repeat(3, 1fr);
     }
-    
+
     .container {
         padding: 30px 40px;
     }
-    
+
     .carouselItem {
         min-width: 250px;
     }
@@ -233,33 +303,33 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
     }
-    
+
     .container {
         padding: 20px;
     }
-    
+
     .title {
         font-size: 36px;
     }
-    
+
     .sectionTitle {
         font-size: 28px;
     }
-    
+
     .carouselItem {
         min-width: 220px;
     }
-    
+
     .carouselButton {
         width: 40px;
         height: 40px;
         font-size: 16px;
     }
-    
+
     .carouselButton.prev {
         left: 10px;
     }
-    
+
     .carouselButton.next {
         right: 10px;
     }
@@ -269,12 +339,12 @@
     .grid {
         grid-template-columns: 1fr;
     }
-    
+
     .card {
         max-width: 300px;
         margin: 0 auto;
     }
-    
+
     .carouselItem {
         min-width: 200px;
     }

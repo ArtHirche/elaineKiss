@@ -3,12 +3,14 @@
 import styles from "../styles/produtos.module.css";
 import { useState, useEffect } from "react";
 import { useProducts } from "@/hooks/useProducts";
+import { useCart } from "@/context/CartContext";
 import { categorias } from "@/data/categorias";
 import Link from "next/link";
 
 export default function Produtos() {
     const [selectedCategorias, setSelectedCategorias] = useState<string[]>([]);
     const { products, loading, error } = useProducts();
+    const { addToCart, setOpen } = useCart();
     
     const handleCategoriaChange = (categoria: string) => {
         setSelectedCategorias(prev => 
@@ -16,6 +18,22 @@ export default function Produtos() {
                 ? prev.filter(c => c !== categoria)
                 : [...prev, categoria]
         );
+    };
+    
+    const handleAddToCart = (product: any, event: React.MouseEvent) => {
+        event.preventDefault(); // Prevent navigation
+        event.stopPropagation(); // Prevent link click
+        
+        // Add product to cart with quantity 1
+        addToCart(product.id, 1, product.price);
+        
+        // Open cart drawer to show the added item
+        setOpen(true);
+        
+        // Refresh page to update cart state
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
     };
     
     const produtosFiltrados = selectedCategorias.length === 0 
@@ -107,10 +125,21 @@ export default function Produtos() {
                             <div className={styles.grid}>
                                 {produtosFiltrados.map((p) => (
                                     <Link href={`/produtos/${p.id}`} key={p.id} className={styles.card}>
-                                        <img src={p.imageUrl || "/produtos/default.jpg"} alt={p.name} className={styles.img} />
+                                        <img 
+                                            src={p.imageUrl ? `/${p.imageUrl}` : "/produtos/default.jpg"} 
+                                            alt={p.name} 
+                                            className={styles.img}
+                                            onError={(e) => {
+                                                console.error('Erro ao carregar imagem para', p.name, ':', p.imageUrl);
+                                                e.currentTarget.src = "/produtos/default.jpg";
+                                            }}
+                                        />
                                         <p className={styles.nome}>{p.name}</p>
                                         <span className={styles.preco}>R$ {p.price.toFixed(2)}</span>
-                                        <button className={styles.botaoCarrinho}>
+                                        <button 
+                                            className={styles.botaoCarrinho}
+                                            onClick={(e) => handleAddToCart(p, e)}
+                                        >
                                             Adicionar ao carrinho
                                         </button>
                                     </Link>

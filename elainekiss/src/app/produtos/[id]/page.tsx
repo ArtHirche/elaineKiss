@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
-import styles from "../../styles/produtos.module.css";
+import styles from "./produto.module.css";
 
 export default function ProdutoDetalhe({ params }: { params: Promise<{ id: string }> }) {
     const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
@@ -30,7 +30,7 @@ export default function ProdutoDetalhe({ params }: { params: Promise<{ id: strin
             </div>
         );
     }
-    
+
     const produto = products.find(p => p.id === resolvedParams.id);
 
     if (loading) {
@@ -70,67 +70,80 @@ export default function ProdutoDetalhe({ params }: { params: Promise<{ id: strin
 
     const handleAddToCart = () => {
         addToCart(produto.id!, quantity, produto.price);
-        alert('Produto adicionado ao carrinho!');
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
     };
 
+    const handleWhatsAppPurchase = () => {
+        const message = `Olá, estou interessado em ${quantity} do ${produto.name}`;
+        const whatsappUrl = `https://wa.me/5511980979540?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
+    const getImageSrc = (imageUrl?: string) => {
+        if (!imageUrl) return "/produtos/default.jpg";
+
+        if (imageUrl.startsWith("http") || imageUrl.startsWith("blob:")) {
+            return imageUrl;
+        }
+
+        return `/${imageUrl}`;
+    };
+    
     return (
-        <div className={styles.container}>
-            <div className={styles.breadcrumbs}>
-                <a href="/">Home</a> &gt; 
-                <a href="/produtos">Produtos</a> &gt; 
-                {produto.name}
-            </div>
+        <div className={styles.page}>
+            <section className={styles.produto_container}>
 
-            <div className={styles.produtoContainer}>
-                <div className={styles.imagemContainer}>
-                    <img 
-                        src={produto.imageUrl || "/produtos/default.jpg"} 
-                        alt={produto.name} 
-                        className={styles.imagem}
-                        onError={(e) => {
-                            console.error('Erro ao carregar imagem:', produto.imageUrl);
-                            console.log('Trocando para imagem padrão...');
-                            e.currentTarget.src = "/produtos/default.jpg";
-                        }}
-                    />
-                </div>
+                <img
+                    className={styles.produto_imagem}
+                    src={getImageSrc(produto.imageUrl)}
+                    alt={produto.name}
+                />
 
-                <div className={styles.detalhesContainer}>
-                    <h1 className={styles.nome}>{produto.name}</h1>
-                    <p className={styles.categoria}>{produto.category}</p>
-                    <p className={styles.descricao}>{produto.description}</p>
-                    
-                    <div className={styles.precoContainer}>
-                        <span className={styles.preco}>R$ {produto.price.toFixed(2)}</span>
+                <div className={styles.produto_detalhe}>
+                    <div className={styles.breadcrumbs}>
+                        <a href="/">Início</a> &gt;
+                        <a href="/produtos"> Produtos</a> &gt;
+                        <span> {produto.name}</span>
                     </div>
 
-                    <div className={styles.compraContainer}>
-                        <div className={styles.quantidadeContainer}>
-                            <label>Quantidade:</label>
-                            <input
-                                type="number"
-                                min="1"
-                                value={quantity}
-                                onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                                className={styles.quantidadeInput}
-                            />
+                    <h1>{produto.name}</h1>
+
+                    <p className={styles.preco}>R$ {produto.price.toFixed(2)}</p>
+
+                    <div className={styles.compra_container}>
+                        <div className={styles.quantidade}>
+                            <button
+                                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                                disabled={quantity <= 1}
+                            >-</button>
+                            <span>{quantity}</span>
+                            <button
+                                onClick={() => setQuantity(quantity + 1)}
+                            >+</button>
                         </div>
 
-                        <button 
-                            onClick={handleAddToCart}
-                            className={styles.botaoComprar}
-                        >
-                            Adicionar ao Carrinho
-                        </button>
+                        <div className={styles.botoes_compra}>
+                            <button 
+                                onClick={handleWhatsAppPurchase}
+                                className={styles.comprar}
+                            >
+                                <img className={styles.whatsapp} src="/images/whatsapp.svg" alt="WhatsApp" />
+                                COMPRAR
+                            </button>
+                            <button
+                                onClick={() => handleAddToCart()}
+                                className={styles.comprar_carrinho}
+                            >Adicionar ao Carrinho</button>
+                        </div>
+
                     </div>
 
-                    {produto.fileName && (
-                        <div className={styles.arquivoInfo}>
-                            <p><strong>Arquivo anexo:</strong> {produto.fileName}</p>
-                        </div>
-                    )}
                 </div>
-            </div>
+
+            </section>
+
         </div>
     );
 }
