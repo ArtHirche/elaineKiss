@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
+import { getImageSrc } from "@/lib/imageUtils";
 import styles from "./produto.module.css";
 
 export default function ProdutoDetalhe({ params }: { params: Promise<{ id: string }> }) {
@@ -81,16 +82,7 @@ export default function ProdutoDetalhe({ params }: { params: Promise<{ id: strin
         window.open(whatsappUrl, '_blank');
     };
 
-    const getImageSrc = (imageUrl?: string) => {
-        if (!imageUrl) return "/produtos/default.jpg";
-
-        if (imageUrl.startsWith("http") || imageUrl.startsWith("blob:")) {
-            return imageUrl;
-        }
-
-        return `/${imageUrl}`;
-    };
-    
+        
     return (
         <div className={styles.page}>
             <section className={styles.produto_container}>

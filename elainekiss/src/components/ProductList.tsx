@@ -2,6 +2,7 @@
 
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/context/CartContext";
+import { getImageSrc } from "@/lib/imageUtils";
 
 export default function ProductList() {
     const { products, loading, error } = useProducts();
@@ -35,7 +36,7 @@ export default function ProductList() {
                         >
                             {product.imageUrl && (
                                 <img
-                                    src={product.imageUrl}
+                                    src={getImageSrc(product.imageUrl)}
                                     alt={product.name}
                                     style={{
                                         width: "100%",

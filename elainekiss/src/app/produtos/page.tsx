@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/context/CartContext";
 import { categorias } from "@/data/categorias";
+import { getImageSrc } from "@/lib/imageUtils";
 import Link from "next/link";
 
 export default function Produtos() {
@@ -126,7 +127,7 @@ export default function Produtos() {
                                 {produtosFiltrados.map((p) => (
                                     <Link href={`/produtos/${p.id}`} key={p.id} className={styles.card}>
                                         <img 
-                                            src={p.imageUrl ? `/${p.imageUrl}` : "/produtos/default.jpg"} 
+                                            src={getImageSrc(p.imageUrl)} 
                                             alt={p.name} 
                                             className={styles.img}
                                             onError={(e) => {
