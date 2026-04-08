@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { useProducts } from "@/hooks/useProducts";
+import { getImageSrc } from "@/lib/imageUtils";
 import styles from "./cart.module.css";
 
 export default function CartDrawer() {
@@ -79,7 +80,23 @@ export default function CartDrawer() {
                             const product = products.find(p => p.id === item.productId);
                             return (
                                 <div key={item.id} className={styles.item}>
-                                    <div className={styles.thumb}></div>
+                                    <div className={styles.thumb}>
+                                        {product?.imageUrl && (
+                                            <img 
+                                                src={getImageSrc(product.imageUrl)} 
+                                                alt={product.name}
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    objectFit: "cover",
+                                                    borderRadius: "4px"
+                                                }}
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                }}
+                                            />
+                                        )}
+                                    </div>
                                     <div className={styles.info}>
                                         <p className={styles.nome}>Produto: {product?.name || 'Carregando...'}</p>
                                         <span className={styles.preco}>R$ {item.price.toFixed(2)}</span>
