@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
-import { localFileService } from "@/lib/firebase/localFileService";
+import { imageService } from "@/lib/firebase/imageService";
 import { categorias } from "@/data/categorias";
 import styles from "./ProductManager.module.css";
 
@@ -70,17 +70,17 @@ export default function ProductManager() {
 
     const uploadFile = async (file: File): Promise<string> => {
         try {
-            console.log('ProductManager: Tentando upload local do arquivo:', file.name);
+            console.log('ProductManager: Processando arquivo com ImageService:', file.name);
             
-            // Para mostrar o arquivo real, vamos usar URL.createObjectURL
-            const localUrl = URL.createObjectURL(file);
-            console.log('ProductManager: URL local criada:', localUrl);
-            return localUrl;
+            // Usar serviço simples e confiável
+            const imageUrl = await imageService.uploadProductImage(file);
+            console.log('ProductManager: Imagem processada:', imageUrl);
+            return imageUrl;
             
         } catch (error) {
-            console.error('ProductManager: Erro no upload local:', error);
-            // Fallback para URL consistente baseada no arquivo
-            return `https://picsum.photos/seed/${encodeURIComponent(file.name)}/400/300.jpg`;
+            console.error('ProductManager: Erro no processamento, usando fallback:', error);
+            // Fallback garantido
+            return `https://picsum.photos/seed/fallback-${Date.now()}/300/200.jpg`;
         }
     };
 
@@ -102,9 +102,9 @@ export default function ProductManager() {
                 console.log('Tamanho do arquivo:', file.size);
                 console.log('Tipo do arquivo:', file.type);
                 
-                // Para mostrar o arquivo real, vamos usar URL.createObjectURL
+                // Para mostrar o arquivo, vamos usar processamento inteligente
                 imageUrl = await uploadFile(file);
-                console.log('Usando arquivo local:', imageUrl);
+                console.log('Usando imagem processada:', imageUrl);
             } else {
                 console.log('Nenhum arquivo selecionado, usando imageUrl existente:', formData.imageUrl);
             }
@@ -116,6 +116,8 @@ export default function ProductManager() {
             };
 
             console.log('Salvando produto:', productData);
+            console.log('imageUrl final:', productData.imageUrl);
+            console.log('imageUrl começa com data:', productData.imageUrl.startsWith('data:'));
 
             if (editingProduct) {
                 console.log('Atualizando produto ID:', editingProduct.id);
@@ -251,6 +253,24 @@ export default function ProductManager() {
                                 <p className={styles.productDescription}>
                                     📝 {product.description}
                                 </p>
+                            )}
+                            
+                            {product.imageUrl && (
+                                <div style={{ marginTop: '12px' }}>
+                                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                                        Imagem: {product.imageUrl.substring(0, 60)}...
+                                    </div>
+                                    <img 
+                                        src={product.imageUrl} 
+                                        alt={product.name} 
+                                        className={styles.productImage}
+                                        onLoad={() => console.log('✅ Imagem carregada:', product.name)}
+                                        onError={(e) => {
+                                            console.error('❌ Erro ao carregar imagem:', product.name);
+                                            e.currentTarget.src = `https://picsum.photos/seed/fallback-${Date.now()}/300/200.jpg`;
+                                        }}
+                                    />
+                                </div>
                             )}
                             
                             <div className={styles.productActions}>
@@ -408,23 +428,6 @@ export default function ProductManager() {
                                     <option value="true">✅ Ativo (visível na loja)</option>
                                     <option value="false">❌ Inativo (oculto na loja)</option>
                                 </select>
-                            </div>
-
-                            <div className={styles.formActions}>
-                                <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className={styles.cancelButton}
-                                >
-                                    ❌ Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={uploading}
-                                    className={styles.saveButton}
-                                >
-                                    {uploading ? '⏳ Salvando...' : isCreating ? '💾 Cadastrar Produto' : '✅ Atualizar Produto'}
-                                </button>
                             </div>
                         </form>
                     </div>

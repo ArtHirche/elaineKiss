@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { productDb } from '@/lib/products';
 
-interface RouteContext {
-  params: {
-    id: string;
-  };
-}
-
-export async function GET(request: NextRequest, context: RouteContext) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = context.params;
+    const { id } = await params;
     
     const product = await productDb.getProductById(id);
     if (!product) {

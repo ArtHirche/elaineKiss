@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { categorias } from "@/data/categorias";
 import { useProducts } from "@/hooks/useProducts";
-import styles from "../../styles/produtos.module.css";
+import styles from "../../../styles/produtos.module.css";
 import Link from "next/link";
 
 export default function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
