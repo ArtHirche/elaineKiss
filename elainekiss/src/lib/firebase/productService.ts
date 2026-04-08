@@ -22,6 +22,7 @@ export interface Product {
   imageUrl?: string;
   fileName?: string;
   fileType?: string;
+  stock?: number;
   isActive: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;

@@ -2,13 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { productDb } from '@/lib/products';
 import { UpdateProductInput } from '@/types/product';
 
-interface RouteContext {
-  params: {
-    id: string;
-  };
-}
-
-export async function GET(request: NextRequest, context: RouteContext) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
     if (!token) {
@@ -28,7 +22,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
     
-    const { id } = context.params;
+    const { id } = await params;
     
     const product = await productDb.getProductById(id);
     if (!product) {
@@ -48,7 +42,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function PUT(request: NextRequest, context: RouteContext) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
     if (!token) {
@@ -68,7 +62,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
-    const { id } = context.params;
+    const { id } = await params;
     const body: UpdateProductInput = await request.json();
 
     if (body.price !== undefined && body.price < 0) {
@@ -103,7 +97,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(request: NextRequest, context: RouteContext) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const token = request.headers.get('authorization')?.replace('Bearer ', '');
     if (!token) {
@@ -123,7 +117,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
     }
 
-    const { id } = context.params;
+    const { id } = await params;
 
     const success = await productDb.deleteProduct(id);
     if (!success) {
