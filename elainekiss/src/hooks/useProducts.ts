@@ -14,9 +14,11 @@ export function useProducts() {
 
   const fetchProducts = async () => {
     try {
+      console.log('useProducts: Fetching products...');
       setLoading(true);
       setError(null);
       const productsData = await productService.getAllProducts();
+      console.log('useProducts: Products received:', productsData);
       setProducts(productsData);
     } catch (err) {
       setError('Failed to fetch products');
@@ -28,9 +30,12 @@ export function useProducts() {
 
   const createProduct = async (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
+      console.log('useProducts: Creating product', productData);
       setError(null);
       await productService.createProduct(productData);
+      console.log('useProducts: Product created, fetching products...');
       await fetchProducts();
+      console.log('useProducts: Products fetched after create');
     } catch (err) {
       setError('Failed to create product');
       console.error('Error creating product:', err);
@@ -39,9 +44,12 @@ export function useProducts() {
 
   const updateProduct = async (productId: string, updates: Partial<Omit<Product, 'id' | 'createdAt'>>) => {
     try {
+      console.log('useProducts: Updating product', productId, updates);
       setError(null);
       await productService.updateProduct(productId, updates);
+      console.log('useProducts: Product updated, fetching products...');
       await fetchProducts();
+      console.log('useProducts: Products fetched after update');
     } catch (err) {
       setError('Failed to update product');
       console.error('Error updating product:', err);
@@ -50,9 +58,12 @@ export function useProducts() {
 
   const deleteProduct = async (productId: string) => {
     try {
+      console.log('useProducts: Deleting product', productId);
       setError(null);
       await productService.deleteProduct(productId);
+      console.log('useProducts: Product deleted, fetching products...');
       await fetchProducts();
+      console.log('useProducts: Products fetched after delete');
     } catch (err) {
       setError('Failed to delete product');
       console.error('Error deleting product:', err);

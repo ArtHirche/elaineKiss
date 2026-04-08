@@ -2,32 +2,47 @@
 
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import styles from "@/app/login/login.module.css";
+import { useRouter } from "next/navigation";
+import styles from "@/app/cadastro/cadastro.module.css";
 
-export default function LoginForm() {
+export default function CadastroForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login, register, loginWithGoogle, resetPassword } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
+  const router = useRouter();
 
-  const handleForgotPassword = async () => {
-    if (!email) {
-      setError("Por favor, digite seu email primeiro");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem");
       return;
     }
 
+    if (password.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      setSuccessMessage("");
+      await register(email, password);
+      // Registro bem-sucedido, mostrar mensagem e redirecionar
+      setSuccessMessage("Conta criada com sucesso! Redirecionando...");
       setError("");
-      setLoading(true);
-      await resetPassword(email);
-      setSuccessMessage("Email de redefinição enviado! Verifique sua caixa de entrada.");
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
     } catch (err: any) {
-      setError(err.message || "Erro ao enviar email de redefinição");
+      setError(err.message || "Ocorreu um erro ao criar conta");
+      setSuccessMessage("");
     } finally {
       setLoading(false);
     }
@@ -35,41 +50,13 @@ export default function LoginForm() {
 
   const handleGoogleLogin = async () => {
     try {
-      setSuccessMessage("");
       setError("");
       setLoading(true);
       await loginWithGoogle();
       // Login com Google bem-sucedido, redirecionar para home
-      window.location.href = "/";
+      router.push("/");
     } catch (err: any) {
       setError(err.message || "Erro ao fazer login com Google");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    try {
-      if (isRegistering) {
-        await register(email, password);
-        // Registro bem-sucedido, mostrar mensagem e redirecionar para login
-        setSuccessMessage("Conta criada com sucesso! Redirecionando para login...");
-        setError("");
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 1500);
-      } else {
-        await login(email, password);
-        // Login bem-sucedido, redirecionar para home
-        window.location.href = "/";
-      }
-    } catch (err: any) {
-      setError(err.message || "Ocorreu um erro");
-      setSuccessMessage("");
     } finally {
       setLoading(false);
     }
@@ -79,9 +66,7 @@ export default function LoginForm() {
     <main className={styles.container}>
       <div className={styles.loginContainer}>
         <div className={styles.formBox}>
-          <h1 className={styles.title}>
-            {isRegistering ? "Criar Conta" : "Acesse sua conta"}
-          </h1>
+          <h1 className={styles.title}>Criando sua Conta</h1>
 
           {successMessage && (
             <div style={{
@@ -130,16 +115,22 @@ export default function LoginForm() {
               required
             />
 
-            <a href="#" className={styles.forgot} onClick={(e) => { e.preventDefault(); handleForgotPassword(); }}>
-              Esqueci minha senha
-            </a>
+            <label>Confirmar Senha</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Digite sua senha novamente"
+              className={styles.input}
+              required
+            />
 
             <button
               type="submit"
               disabled={loading}
               className={styles.loginButton}
             >
-              {loading ? "Carregando..." : (isRegistering ? "Criar Conta" : "Entrar")}
+              {loading ? "Criando..." : "Criar Conta"}
             </button>
 
             <div className={styles.separator}>
@@ -150,39 +141,22 @@ export default function LoginForm() {
 
             <div className={styles.socialButtons}>
               <button 
-                className={styles.google} 
                 type="button"
+                className={styles.google}
                 onClick={handleGoogleLogin}
                 disabled={loading}
               >
                 <img src="/images/google.png" alt="Google" className={styles.googleIcon} />
-                {loading ? "Carregando..." : "Acessar com Google"}
+                {loading ? "Carregando..." : "Criar com Google"}
               </button>
             </div>
           </form>
 
-          <p className={styles.create}>
-            {isRegistering ? "Já tem uma conta?" : "Ainda não tem uma conta?"}{" "}
-            <button
-              type="button"
-              onClick={() => {
-                setIsRegistering(!isRegistering);
-                setError("");
-                setSuccessMessage("");
-              }}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#667eea",
-                cursor: "pointer",
-                fontSize: "14px",
-                fontWeight: "600",
-                textDecoration: "underline"
-              }}
-            >
-              {isRegistering ? "Entre aqui" : "Criar agora"}
+          <div className={styles.returnButton}>
+            <button className={styles.return}>
+              <a href="/login">Voltar</a> 
             </button>
-          </p>
+          </div>
         </div>
       </div>
     </main>

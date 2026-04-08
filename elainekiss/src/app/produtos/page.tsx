@@ -2,65 +2,65 @@
 
 import styles from "../styles/produtos.module.css";
 import { useState, useEffect } from "react";
-
+import { useProducts } from "@/hooks/useProducts";
+import { useCart } from "@/context/CartContext";
+import { categorias } from "@/data/categorias";
+import { getImageSrc } from "@/lib/imageUtils";
 import Link from "next/link";
 
 export default function Produtos() {
     const [selectedCategorias, setSelectedCategorias] = useState<string[]>([]);
+    const { products, loading, error } = useProducts();
+    const { addToCart, setOpen } = useCart();
     
-    const categorias = [
-        "Aneis, Correntes e Pulseiras",
-        "Bolsa Infantil",
-        "Brincos",
-        "Button/Broches",
-        "Canetas/Lápis",
-        "Chaveiros",
-        "Chaveiro Crochê",
-        "Clips",
-        "Corrente de Óculos",
-        "Cremes/Batons",
-        "Escova de Cabelo",
-        "Estojo",
-        "Etiquetas",
-        "Imã de Geladeira",
-        "Marca Página",
-        "Pin Tênis e Crock",
-        "Phone Scrap",
-        "Ponteira de Lápis",
-        "Pregador de Papeis/Alimentos",
-        "Prendedor de Chupeta",
-        "Produtos de Cabelo",
-        "Roller Clips/Crachá/Bilhete",
-        "Terços e Mini Terços",
-        "Tubetes"
-    ];
-
     const handleCategoriaChange = (categoria: string) => {
-    setSelectedCategorias(prev => 
-        prev.includes(categoria) 
-            ? prev.filter(c => c !== categoria)
-            : [...prev, categoria]
-    );
-};
+        setSelectedCategorias(prev => 
+            prev.includes(categoria) 
+                ? prev.filter(c => c !== categoria)
+                : [...prev, categoria]
+        );
+    };
     
-    const produtos = [
-        { id: 1, nome: "Produto 1", preco: 12.50, imagem: "/produtos/1.jpg", categoria: "Brincos" },
-        { id: 2, nome: "Produto 2", preco: 19.90, imagem: "/produtos/2.jpg", categoria: "Aneis, Correntes e Pulseiras" },
-        { id: 3, nome: "Produto 3", preco: 29.99, imagem: "/produtos/3.jpg", categoria: "Clips" },
-        { id: 4, nome: "Produto 4", preco: 29.99, imagem: "/produtos/4.jpg", categoria: "Chaveiros" },
-        { id: 5, nome: "Produto 5", preco: 29.99, imagem: "/produtos/5.jpg", categoria: "Bolsa Infantil" },
-        { id: 6, nome: "Produto 6", preco: 200.99, imagem: "/produtos/6.jpg", categoria: "Button/Broches" },
-        { id: 7, nome: "Produto 7", preco: 20.99, imagem: "/produtos/7.jpg", categoria: "Canetas/Lápis" },
-        { id: 8, nome: "Produto 8", preco: 29.99, imagem: "/produtos/8.jpg", categoria: "Chaveiro Crochê" },
-        { id: 9, nome: "Produto 9", preco: 29.99, imagem: "/produtos/9.jpg", categoria: "Corrente de Óculos" },
-        { id: 10, nome: "Produto 10", preco: 29.99, imagem: "/produtos/10.jpg", categoria: "Cremes/Batons" },
-        { id: 11, nome: "Produto 11", preco: 29.99, imagem: "/produtos/11.jpg", categoria: "Escova de Cabelo" },
-        { id: 12, nome: "Produto 12", preco: 29.99, imagem: "/produtos/12.jpg", categoria: "Estojo" },
-    ];
-
+    const handleAddToCart = (product: any, event: React.MouseEvent) => {
+        event.preventDefault(); // Prevent navigation
+        event.stopPropagation(); // Prevent link click
+        
+        // Add product to cart with quantity 1
+        addToCart(product.id, 1, product.price);
+        
+        // Open cart drawer to show the added item
+        setOpen(true);
+        
+        // Refresh page to update cart state
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
+    };
+    
     const produtosFiltrados = selectedCategorias.length === 0 
-        ? produtos 
-        : produtos.filter(produto => selectedCategorias.includes(produto.categoria));
+        ? products 
+        : products.filter(produto => selectedCategorias.includes(produto.category));
+
+    if (loading) {
+        return (
+            <div className={styles.container}>
+                <div style={{ textAlign: 'center', padding: '50px' }}>
+                    <h2>Carregando produtos...</h2>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className={styles.container}>
+                <div style={{ textAlign: 'center', padding: '50px' }}>
+                    <h2>Erro ao carregar produtos</h2>
+                    <p>{error}</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.container}>
@@ -73,15 +73,15 @@ export default function Produtos() {
                     <h3 className={styles.categoriasTitle}>Categorias</h3>
 
                     <div className={styles.checkboxContainer}>
-                        {categorias.map((cat, i) => (
-                            <label key={i} className={styles.checkboxLabel}>
+                        {categorias.map((cat) => (
+                            <label key={cat.slug} className={styles.checkboxLabel}>
                                 <input
                                     type="checkbox"
                                     className={styles.checkbox}
-                                    checked={selectedCategorias.includes(cat)}
-                                    onChange={() => handleCategoriaChange(cat)}
+                                    checked={selectedCategorias.includes(cat.nome)}
+                                    onChange={() => handleCategoriaChange(cat.nome)}
                                 />
-                                <span className={styles.checkboxText}>{cat}</span>
+                                <span className={styles.checkboxText}>{cat.nome}</span>
                             </label>
                         ))}
                     </div>
@@ -125,14 +125,25 @@ export default function Produtos() {
                         ) : (
                             <div className={styles.grid}>
                                 {produtosFiltrados.map((p) => (
-                                    <a href={`/produtos/mocks/${p.id}`} key={p.id} className={styles.card}>
-                                        <img src={p.imagem} alt={p.nome} className={styles.img} />
-                                        <p className={styles.nome}>{p.nome}</p>
-                                        <span className={styles.preco}>R$ {p.preco.toFixed(2)}</span>
-                                        <button className={styles.botaoCarrinho}>
+                                    <Link href={`/produtos/${p.id}`} key={p.id} className={styles.card}>
+                                        <img 
+                                            src={getImageSrc(p.imageUrl)} 
+                                            alt={p.name} 
+                                            className={styles.img}
+                                            onError={(e) => {
+                                                console.error('Erro ao carregar imagem para', p.name, ':', p.imageUrl);
+                                                e.currentTarget.src = "/produtos/default.jpg";
+                                            }}
+                                        />
+                                        <p className={styles.nome}>{p.name}</p>
+                                        <span className={styles.preco}>R$ {p.price.toFixed(2)}</span>
+                                        <button 
+                                            className={styles.botaoCarrinho}
+                                            onClick={(e) => handleAddToCart(p, e)}
+                                        >
                                             Adicionar ao carrinho
                                         </button>
-                                    </a>
+                                    </Link>
                                 ))}
                             </div>
                         )}

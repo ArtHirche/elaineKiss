@@ -16,3 +16,24 @@ console.log('Firebase config loaded');
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+// Testar conexão com Firestore
+import { collection, getDocs, query, limit } from 'firebase/firestore';
+
+// Teste de conexão assíncrono
+const testFirestoreConnection = async () => {
+  try {
+    console.log('Testando conexão com Firestore...');
+    const testQuery = query(collection(db, 'products'), limit(1));
+    const snapshot = await getDocs(testQuery);
+    console.log('✅ Firebase Firestore conectado com sucesso!');
+    console.log('📋 Produtos existentes:', snapshot.size);
+  } catch (error: any) {
+    console.error('❌ Erro na conexão com Firebase Firestore:', error);
+    console.error('Código do erro:', error.code);
+    console.error('Mensagem:', error.message);
+  }
+};
+
+// Executar teste
+testFirestoreConnection();

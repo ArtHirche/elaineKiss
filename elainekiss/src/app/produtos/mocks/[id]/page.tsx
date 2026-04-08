@@ -44,10 +44,10 @@ export default async function ProdutoPage({ params }: PageProps) {
                         </div>
 
                         <div className={styles.botoes_compra}>
-                            <Link href={`/produtos/mocks/checkout?id=${produto.id}`}>
-                                <button className={styles.comprar}>COMPRAR</button>
-                            </Link>
-
+                            <button className={styles.comprar}>
+                                <img className={styles.whatsapp} src="/images/whatsapp.svg" alt="WhatsApp" />
+                                COMPRAR
+                            </button>
                             <button className={styles.comprar_carrinho}>Adicionar ao Carrinho</button>
                         </div>
 

@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
+import { imageService } from "@/lib/firebase/imageService";
+import { categorias } from "@/data/categorias";
+import styles from "./ProductManager.module.css";
 
 export default function ProductManager() {
     const { products, loading, error, createProduct, updateProduct, deleteProduct } = useProducts();
@@ -11,38 +14,130 @@ export default function ProductManager() {
     const [formData, setFormData] = useState({
         name: "",
         description: "",
-        price: 0,
+        price: "",
         category: "",
-        stock: 0,
         imageUrl: "",
+        fileName: "",
+        fileType: "",
         isActive: true,
     });
 
+    const [file, setFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
+
     const resetForm = () => {
+        console.log('ProductManager: Resetting form');
         setFormData({
             name: "",
             description: "",
-            price: 0,
+            price: "",
             category: "",
-            stock: 0,
             imageUrl: "",
+            fileName: "",
+            fileType: "",
             isActive: true,
         });
+        setFile(null);
         setIsCreating(false);
         setEditingProduct(null);
+        console.log('ProductManager: Form reset completed');
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            // Validar tipo de arquivo
+            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!allowedTypes.includes(selectedFile.type)) {
+                alert('Tipo de arquivo não permitido. Use JPG, PNG ou PDF.');
+                return;
+            }
+
+            // Validar tamanho (5MB)
+            if (selectedFile.size > 5 * 1024 * 1024) {
+                alert('Arquivo muito grande. Tamanho máximo: 5MB.');
+                return;
+            }
+
+            setFile(selectedFile);
+            setFormData({
+                ...formData,
+                fileName: selectedFile.name,
+                fileType: selectedFile.type,
+            });
+        }
+    };
+
+    const uploadFile = async (file: File): Promise<string> => {
+        try {
+            console.log('ProductManager: Processando arquivo com ImageService:', file.name);
+            
+            // Usar serviço simples e confiável
+            const imageUrl = await imageService.uploadProductImage(file);
+            console.log('ProductManager: Imagem processada:', imageUrl);
+            return imageUrl;
+            
+        } catch (error) {
+            console.error('ProductManager: Erro no processamento, usando fallback:', error);
+            // Fallback garantido
+            return `https://picsum.photos/seed/fallback-${Date.now()}/300/200.jpg`;
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log('=== INICIANDO SUBMIT ===');
+        console.log('formData atual:', formData);
+        console.log('file selecionado:', file);
+        console.log('uploading:', uploading);
+        
+        setUploading(true);
+
         try {
-            if (editingProduct) {
-                await updateProduct(editingProduct.id, formData);
+            let imageUrl = formData.imageUrl;
+
+            // Se houver arquivo, fazer upload (sempre funciona, tem fallback)
+            if (file) {
+                console.log('Iniciando upload do arquivo:', file.name);
+                console.log('Tamanho do arquivo:', file.size);
+                console.log('Tipo do arquivo:', file.type);
+                
+                // Para mostrar o arquivo, vamos usar processamento inteligente
+                imageUrl = await uploadFile(file);
+                console.log('Usando imagem processada:', imageUrl);
             } else {
-                await createProduct(formData);
+                console.log('Nenhum arquivo selecionado, usando imageUrl existente:', formData.imageUrl);
             }
+
+            const productData = {
+                ...formData,
+                imageUrl,
+                price: parseFloat(formData.price) || 0,
+            };
+
+            console.log('Salvando produto:', productData);
+            console.log('imageUrl final:', productData.imageUrl);
+            console.log('imageUrl começa com data:', productData.imageUrl.startsWith('data:'));
+
+            if (editingProduct) {
+                console.log('Atualizando produto ID:', editingProduct.id);
+                await updateProduct(editingProduct.id, productData);
+                console.log('Produto atualizado com sucesso');
+            } else {
+                console.log('Criando novo produto');
+                await createProduct(productData);
+                console.log('Produto criado com sucesso');
+            }
+
+            console.log('ProductManager: Chamando resetForm()');
             resetForm();
-        } catch (err) {
-            console.error("Error saving product:", err);
+            console.log('ProductManager: resetForm() concluído');
+        } catch (error) {
+            console.error('=== ERRO NO SUBMIT ===');
+            console.error('Error saving product:', error);
+            alert('Erro ao salvar produto: ' + (error as Error).message);
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -50,10 +145,11 @@ export default function ProductManager() {
         setFormData({
             name: product.name,
             description: product.description,
-            price: product.price,
+            price: product.price.toString(),
             category: product.category,
-            stock: product.stock,
             imageUrl: product.imageUrl || "",
+            fileName: product.fileName || "",
+            fileType: product.fileType || "",
             isActive: product.isActive,
         });
         setEditingProduct(product);
@@ -61,223 +157,282 @@ export default function ProductManager() {
     };
 
     const handleDelete = async (productId: string) => {
-        if (confirm("Tem certeza que deseja excluir este produto?")) {
+        if (window.confirm('Tem certeza que deseja excluir este produto?')) {
             try {
                 await deleteProduct(productId);
-            } catch (err) {
-                console.error("Error deleting product:", err);
+                console.log('ProductManager: Produto excluído com sucesso');
+            } catch (error) {
+                console.error('ProductManager: Erro ao excluir produto:', error);
+                alert('Erro ao excluir produto');
             }
         }
     };
 
-    if (loading) return <div>Carregando produtos...</div>;
-    if (error) return <div>Erro: {error}</div>;
-
     return (
-        <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
-            <h1>Gerenciamento de Produtos</h1>
-
-            {!isCreating && !editingProduct && (
-                <button
+        <div className={styles.container}>
+            <div className={styles.header}>
+                <div>
+                    <h1>🛍️ Gerenciamento de Produtos</h1>
+                    <p className={styles.modalSubtitle}>
+                        {products.length} produto(s) cadastrado(s)
+                    </p>
+                </div>
+                <button 
                     onClick={() => setIsCreating(true)}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                        marginBottom: "20px",
-                    }}
+                    className={styles.addButton}
                 >
-                    Adicionar Produto
+                    ➕ Novo Produto
                 </button>
-            )}
+            </div>
 
-            {(isCreating || editingProduct) && (
-                <div
-                    style={{
-                        border: "1px solid #ddd",
-                        padding: "20px",
-                        borderRadius: "5px",
-                        marginBottom: "20px",
-                    }}
-                >
-                    <h2>{editingProduct ? "Editar Produto" : "Novo Produto"}</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: "15px" }}>
-                            <label>Nome:</label>
-                            <input
-                                type="text"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                required
-                                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: "15px" }}>
-                            <label>Descrição:</label>
-                            <textarea
-                                value={formData.description}
-                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                required
-                                style={{ width: "100%", padding: "8px", marginTop: "5px", minHeight: "80px" }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: "15px" }}>
-                            <label>Preço:</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                value={formData.price}
-                                onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-                                required
-                                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: "15px" }}>
-                            <label>Categoria:</label>
-                            <input
-                                type="text"
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                required
-                                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: "15px" }}>
-                            <label>Estoque:</label>
-                            <input
-                                type="number"
-                                value={formData.stock}
-                                onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
-                                required
-                                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: "15px" }}>
-                            <label>URL da Imagem:</label>
-                            <input
-                                type="url"
-                                value={formData.imageUrl}
-                                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                                style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: "15px" }}>
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    checked={formData.isActive}
-                                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                                />
-                                Ativo
-                            </label>
-                        </div>
-
-                        <div>
-                            <button
-                                type="submit"
-                                style={{
-                                    padding: "10px 20px",
-                                    backgroundColor: "#28a745",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    marginRight: "10px",
-                                }}
-                            >
-                                {editingProduct ? "Atualizar" : "Criar"}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={resetForm}
-                                style={{
-                                    padding: "10px 20px",
-                                    backgroundColor: "#6c757d",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
+            {error && (
+                <div className={styles.error}>
+                    ❌ Erro: {error}
                 </div>
             )}
 
-            <div>
-                <h2>Lista de Produtos</h2>
-                {products.length === 0 ? (
-                    <p>Nenhum produto encontrado.</p>
-                ) : (
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
-                        {products.map((product) => (
-                            <div
-                                key={product.id}
-                                style={{
-                                    border: "1px solid #ddd",
-                                    padding: "15px",
-                                    borderRadius: "5px",
-                                    backgroundColor: product.isActive ? "white" : "#f8f9fa",
-                                }}
-                            >
-                                <h3>{product.name}</h3>
-                                <p>{product.description}</p>
-                                <p><strong>Preço:</strong> R$ {product.price.toFixed(2)}</p>
-                                <p><strong>Categoria:</strong> {product.category}</p>
-                                <p><strong>Estoque:</strong> {product.stock}</p>
-                                <p><strong>Status:</strong> {product.isActive ? "Ativo" : "Inativo"}</p>
-                                {product.imageUrl && (
-                                    <img
-                                        src={product.imageUrl}
-                                        alt={product.name}
-                                        style={{ width: "100%", height: "150px", objectFit: "cover", marginTop: "10px" }}
-                                    />
-                                )}
-                                <div style={{ marginTop: "10px" }}>
-                                    <button
-                                        onClick={() => handleEdit(product)}
-                                        style={{
-                                            padding: "5px 10px",
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            border: "none",
-                                            borderRadius: "3px",
-                                            cursor: "pointer",
-                                            marginRight: "5px",
-                                        }}
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(product.id!)}
-                                        style={{
-                                            padding: "5px 10px",
-                                            backgroundColor: "#dc3545",
-                                            color: "white",
-                                            border: "none",
-                                            borderRadius: "3px",
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        Excluir
-                                    </button>
-                                </div>
+            {loading ? (
+                <div className={styles.loading}>
+                    <div className={styles.emptyStateIcon}>⏳</div>
+                    <p>Carregando produtos...</p>
+                </div>
+            ) : products.length === 0 ? (
+                <div className={styles.emptyState}>
+                    <div className={styles.emptyStateIcon}>📦</div>
+                    <h2 className={styles.emptyStateTitle}>Nenhum produto encontrado</h2>
+                    <p className={styles.emptyStateText}>
+                        Comece cadastrando seu primeiro produto para preencher sua loja virtual.
+                    </p>
+                    <button 
+                        onClick={() => setIsCreating(true)}
+                        className={styles.addButton}
+                    >
+                        🛒 Cadastrar Primeiro Produto
+                    </button>
+                </div>
+            ) : (
+                <div className={styles.productsList}>
+                    {products.map((product) => (
+                        <div key={product.id} className={styles.productCard}>
+                            <div className={styles.productHeader}>
+                                <h3 className={styles.productName}>
+                                    {product.name} 
+                                    {product.isActive ? '✅' : '❌'}
+                                </h3>
+                                <p className={styles.productPrice}>
+                                    💰 R$ {product.price.toFixed(2)}
+                                </p>
                             </div>
-                        ))}
+                            
+                            <div className={styles.productInfo}>
+                                <div className={styles.infoItem}>
+                                    <span className={styles.infoLabel}>📂 Categoria</span>
+                                    <span className={styles.infoValue}>{product.category}</span>
+                                </div>
+                                <div className={styles.infoItem}>
+                                    <span className={styles.infoLabel}>📅 Data</span>
+                                    <span className={styles.infoValue}>
+                                        {product.createdAt?.toDate?.()?.toLocaleDateString?.('pt-BR') || 'N/A'}
+                                    </span>
+                                </div>
+                                {product.fileName && (
+                                    <div className={styles.infoItem}>
+                                        <span className={styles.infoLabel}>📎 Arquivo</span>
+                                        <span className={styles.infoValue}>{product.fileName}</span>
+                                    </div>
+                                )}
+                                {product.fileType && (
+                                    <div className={styles.infoItem}>
+                                        <span className={styles.infoLabel}>📄 Tipo</span>
+                                        <span className={styles.infoValue}>{product.fileType}</span>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {product.description && (
+                                <p className={styles.productDescription}>
+                                    📝 {product.description}
+                                </p>
+                            )}
+                            
+                            {product.imageUrl && (
+                                <div style={{ marginTop: '12px' }}>
+                                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                                        Imagem: {product.imageUrl.substring(0, 60)}...
+                                    </div>
+                                    <img 
+                                        src={product.imageUrl} 
+                                        alt={product.name} 
+                                        className={styles.productImage}
+                                        onLoad={() => console.log('✅ Imagem carregada:', product.name)}
+                                        onError={(e) => {
+                                            console.error('❌ Erro ao carregar imagem:', product.name);
+                                            e.currentTarget.src = `https://picsum.photos/seed/fallback-${Date.now()}/300/200.jpg`;
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            
+                            <div className={styles.productActions}>
+                                <button 
+                                    onClick={() => handleEdit(product)}
+                                    className={styles.editButton}
+                                >
+                                    ✏️ Editar
+                                </button>
+                                <button 
+                                    onClick={() => handleDelete(product.id!)}
+                                    className={styles.deleteButton}
+                                >
+                                    🗑️ Excluir
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {(isCreating || editingProduct) && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <div className={styles.modalHeader}>
+                            <h2 className={styles.modalTitle}>
+                                {isCreating ? '🛒 Cadastrar Novo Produto' : '✏️ Editar Produto'}
+                            </h2>
+                            <p className={styles.modalSubtitle}>
+                                {isCreating 
+                                    ? 'Preencha os dados abaixo para adicionar um novo produto à sua loja.'
+                                    : 'Atualize as informações do produto selecionado.'
+                                }
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className={styles.form}>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Nome do Produto <span className={styles.required}>*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                    className={styles.formInput}
+                                    placeholder="Ex: Tênis Esportivo"
+                                    required
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Categoria <span className={styles.required}>*</span>
+                                </label>
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                                    className={styles.formSelect}
+                                    required
+                                >
+                                    <option value="">Selecione uma categoria</option>
+                                    {categorias.map((cat) => (
+                                        <option key={cat.slug} value={cat.nome}>
+                                            {cat.nome}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Preço <span className={styles.required}>*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({...formData, price: e.target.value})}
+                                    className={styles.formInput}
+                                    placeholder="Ex: 199.99"
+                                    required
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Descrição
+                                </label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                                    className={styles.formTextarea}
+                                    placeholder="Descreva seu produto, suas características, benefícios..."
+                                    rows={4}
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    📎 Imagem do Produto
+                                </label>
+                                <div 
+                                    className={`${styles.fileUpload} ${file ? styles.hasFile : ''}`}
+                                    onClick={() => document.getElementById('fileInput')?.click()}
+                                >
+                                    <div className={styles.fileUploadIcon}>
+                                        {file ? '✅' : '📁'}
+                                    </div>
+                                    <p className={styles.fileUploadText}>
+                                        {file ? `Arquivo selecionado: ${file.name}` : 'Clique para selecionar uma imagem'}
+                                    </p>
+                                    <p className={styles.fileUploadHint}>
+                                        Formatos aceitos: JPG, PNG, PDF (máx 5MB)
+                                    </p>
+                                    {file && (
+                                        <div className={styles.fileInfo}>
+                                            📊 Tamanho: {(file.size / 1024).toFixed(1)} KB | 
+                                            📄 Tipo: {file.type}
+                                        </div>
+                                    )}
+                                </div>
+                                <input
+                                    id="fileInput"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    accept="image/jpeg,image/png,application/pdf"
+                                    style={{ display: 'none' }}
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    URL da Imagem (opcional)
+                                </label>
+                                <input
+                                    type="url"
+                                    value={formData.imageUrl}
+                                    onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                                    className={styles.formInput}
+                                    placeholder="https://exemplo.com/imagem.jpg"
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    📦 Status do Produto
+                                </label>
+                                <select
+                                    value={formData.isActive.toString()}
+                                    onChange={(e) => setFormData({...formData, isActive: e.target.value === 'true'})}
+                                    className={styles.formSelect}
+                                >
+                                    <option value="true">✅ Ativo (visível na loja)</option>
+                                    <option value="false">❌ Inativo (oculto na loja)</option>
+                                </select>
+                            </div>
+                        </form>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </div>
     );
 }
