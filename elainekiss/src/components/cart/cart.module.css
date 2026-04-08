@@ -86,50 +86,7 @@
 
 .item:hover {
     background: var(--shadow-hover);
-    transform: scale(1.02);
     box-shadow: 0 4px 12px rgba(254, 212, 109, 0.3);
-}
-
-.thumb {
-    width: 70px;
-    height: 70px;
-    background: var(--fore-ground-shadow);
-    border-radius: 10px;
-}
-
-.info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.nome {
-    font-size: 16px;
-    color: #ffffff;
-}
-
-.preco {
-    font-size: 14px;
-    color: #ffffff;
-}
-
-.quantidade {
-    font-size: 14px;
-    color: #ffffff;
-}
-
-.removeButton {
-    background: red;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.removeButton:hover {
-    background: #cc0000;
 }
 
 .footer {
