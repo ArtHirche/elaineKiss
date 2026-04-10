@@ -6,10 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    ":generate": " generate",
-    ":migrate": " migrate dev",
-    ":studio": " studio"
+    "lint": "eslint"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.2",
@@ -20,7 +17,6 @@
     "jsonwebtoken": "^9.0.3",
     "next": "^16.0.7",
     "next-auth": "^4.24.13",
-    "": "^7.5.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "swagger-jsdoc": "^6.2.8",
@@ -35,7 +31,6 @@
     "baseline-browser-mapping": "^2.10.14",
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
-    "": "^5.22.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
