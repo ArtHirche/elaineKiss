@@ -164,4 +164,3 @@ rm -Recurse -Force node_modules; rm package-lock.json -ErrorAction SilentlyConti
 Desenvolvido por:
 - Arthur Hirche
 - Erik David
-- 
