@@ -19,6 +19,7 @@
     "next-auth": "^4.24.13",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "styled-jsx": "*",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
@@ -32,6 +33,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "5.4.5"
   }
 }
