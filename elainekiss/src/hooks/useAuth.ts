@@ -57,7 +57,7 @@ export function useAuth() {
   const resetPassword = async (email: string) => {
     try {
       await sendPasswordResetEmail(auth, email, {
-        url: 'http://localhost:3000/login',
+        url: 'https://elainekiss.com/login',
         handleCodeInApp: false,
       });
     } catch (error) {

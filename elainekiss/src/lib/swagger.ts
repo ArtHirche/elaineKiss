@@ -14,7 +14,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'https://elainekiss.com',
         description: 'Development server',
       },
     ],
