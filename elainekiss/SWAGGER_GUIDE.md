@@ -10,10 +10,10 @@ A API agora possui documentação interativa com Swagger UI!
    ```
 
 2. **Acesse a documentação:**
-   - Abra no navegador: `http://localhost:3000/api/docs`
+   - Abra no navegador: `https://elainekiss.com/api/docs`
    
 3. **Documentação em JSON:**
-   - Para obter o JSON do OpenAPI: `http://localhost:3000/api/docs?format=json`
+   - Para obter o JSON do OpenAPI: `https://elainekiss.com/api/docs?format=json`
 
 ## Recursos da Documentação
 
