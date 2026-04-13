@@ -37,5 +37,5 @@ const testFirestoreConnection = async () => {
   }
 };
 
-// Executar teste
+// executar teste
 testFirestoreConnection();
