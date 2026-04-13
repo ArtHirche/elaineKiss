@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.2",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",
     "firebase": "^12.11.0",
     "jsonwebtoken": "^9.0.3",
@@ -19,18 +17,20 @@
     "next-auth": "^4.24.13",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "styled-jsx": "*",
+    "styled-jsx": "^5.1.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.37",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/swagger-jsdoc": "^6.0.4",
     "baseline-browser-mapping": "^2.10.14",
-    "eslint": "^9",
+    "eslint": "9.39.0",
     "eslint-config-next": "16.0.7",
     "tailwindcss": "^4",
     "typescript": "5.4.5"
