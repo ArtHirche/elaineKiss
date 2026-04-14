@@ -1,6 +1,6 @@
 # Documentação Swagger UI
 
-A API agora possui documentação interativa com Swagger UI!
+A API possui documentação interativa com Swagger UI!
 
 ## Como Acessar
 
