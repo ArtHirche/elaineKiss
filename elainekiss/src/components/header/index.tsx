@@ -10,8 +10,7 @@ import UserMenu from "@/components/auth/UserMenu";
 
 export default function Page() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [categoriasDropdownOpen, setCategoriasDropdownOpen] = useState(false);
-  const [busca, setBusca] = useState("");
+    const [busca, setBusca] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -44,33 +43,7 @@ export default function Page() {
     router.push(`/produtos/busca?q=${suggestion}`);
   };
 
-  const categorias = [
-    "Aneis, Correntes e Pulseiras",
-    "Bolsa Infantil",
-    "Brincos",
-    "Button/Broches",
-    "Canetas/Lápis",
-    "Chaveiros",
-    "Chaveiro Crochê",
-    "Clips",
-    "Corrente de Óculos",
-    "Cremes/Batons",
-    "Escova de Cabelo",
-    "Estojo",
-    "Etiquetas",
-    "Imã de Geladeira",
-    "Marca Página",
-    "Pin Tênis e Crock",
-    "Phone Scrap",
-    "Ponteira de Lápis",
-    "Pregador de Papeis/Alimentos",
-    "Prendedor de Chupeta",
-    "Produtos de Cabelo",
-    "Roller Clips/Crachá/Bilhete",
-    "Terços e Mini Terços",
-    "Tubetes"
-  ].sort();
-
+  
 
   useEffect(() => {
     function updateHeaderHeight() {
@@ -175,40 +148,7 @@ export default function Page() {
             </button>
           </div>
 
-          <div className={styles.link_catg}>
-            <button
-              className={styles.nav_link}
-              onClick={() => setCategoriasDropdownOpen(!categoriasDropdownOpen)}
-            >
-              Categorias
-            </button>
-
-            {categoriasDropdownOpen && (
-              <div className={styles.categoriasDropdown}>
-                <ul className={styles.categoriasDropdownMenu}>
-                  {categorias.map((cat, i) => {
-                    const slug = cat
-                      .toLowerCase()
-                      .normalize("NFD")
-                      .replace(/[\u0300-\u036f]/g, "")
-                      .replace(/,/g, "")
-                      .replace(/\//g, "-")
-                      .replace(/ /g, "-")
-                      .replace(/[^\w-]+/g, "");
-
-                    return (
-                      <li key={i} className={styles.categoriasDropdownItem}>
-                        <Link href={`/produtos/${slug}`}>
-                          {cat}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-          </div>
-
+          
         </div>
 
 
