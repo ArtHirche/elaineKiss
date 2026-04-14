@@ -78,7 +78,7 @@
     border-radius: 12px;
     padding: 12px;
     border: 2px solid var(--fore-ground);
-    color: rgb(202, 202, 202);
+    color: rgb(255, 255, 255);
     transition: all 0.3s ease;
     cursor: pointer;
 }
