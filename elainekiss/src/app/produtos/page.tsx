@@ -10,6 +10,7 @@ import Link from "next/link";
 
 export default function Produtos() {
     const [selectedCategorias, setSelectedCategorias] = useState<string[]>([]);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const { products, loading, error } = useProducts();
     const { addToCart, setOpen } = useCart();
     
@@ -70,33 +71,41 @@ export default function Produtos() {
             <div className={styles.layout}>
 
                 <aside className={styles.sidebar}>
+                    <button 
+                        className={styles.filterToggleBtn}
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    >
+                        {isFilterOpen ? 'Ocultar Categorias' : 'Mostrar Categorias'}
+                    </button>
                     <h3 className={styles.categoriasTitle}>Categorias</h3>
 
-                    <div className={styles.checkboxContainer}>
-                        {categorias.map((cat) => (
-                            <label key={cat.slug} className={styles.checkboxLabel}>
-                                <input
-                                    type="checkbox"
-                                    className={styles.checkbox}
-                                    checked={selectedCategorias.includes(cat.nome)}
-                                    onChange={() => handleCategoriaChange(cat.nome)}
-                                />
-                                <span className={styles.checkboxText}>{cat.nome}</span>
-                            </label>
-                        ))}
-                    </div>
-                    
-                    {selectedCategorias.length > 0 && (
-                        <div className={styles.selectedInfo}>
-                            <span>{selectedCategorias.length} categoria(s) selecionada(s)</span>
-                            <button 
-                                className={styles.clearButton}
-                                onClick={() => setSelectedCategorias([])}
-                            >
-                                Limpar
-                            </button>
+                    <div className={`${styles.filterContent} ${isFilterOpen ? styles.open : ''}`}>
+                        <div className={styles.checkboxContainer}>
+                            {categorias.map((cat) => (
+                                <label key={cat.slug} className={styles.checkboxLabel}>
+                                    <input
+                                        type="checkbox"
+                                        className={styles.checkbox}
+                                        checked={selectedCategorias.includes(cat.nome)}
+                                        onChange={() => handleCategoriaChange(cat.nome)}
+                                    />
+                                    <span className={styles.checkboxText}>{cat.nome}</span>
+                                </label>
+                            ))}
                         </div>
-                    )}
+                        
+                        {selectedCategorias.length > 0 && (
+                            <div className={styles.selectedInfo}>
+                                <span>{selectedCategorias.length} categoria(s) selecionada(s)</span>
+                                <button 
+                                    className={styles.clearButton}
+                                    onClick={() => setSelectedCategorias([])}
+                                >
+                                    Limpar
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </aside>
 
                 <main className={styles.main}>
