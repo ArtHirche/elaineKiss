@@ -8,6 +8,7 @@ import Link from "next/link";
 
 export default function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
     const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const { products, loading } = useProducts();
 
     useEffect(() => {
@@ -29,7 +30,13 @@ export default function CategoriaPage({ params }: { params: Promise<{ slug: stri
     }
 
     const { slug } = resolvedParams;
-    const categoriaAtual = categorias.find((c) => c.slug === slug);
+    const decodedSlug = decodeURIComponent(slug);
+    const categoriaAtual = categorias.find((c) => 
+        c.slug === slug || 
+        c.slug === decodedSlug || 
+        c.slug === decodedSlug.replace(/\s+/g, "-") ||
+        c.nome.toLowerCase() === decodedSlug.toLowerCase()
+    );
     
     // Filtrar produtos pela categoria
     const produtosFiltrados = products.filter(p => p.category === categoriaAtual?.nome);
@@ -41,20 +48,28 @@ export default function CategoriaPage({ params }: { params: Promise<{ slug: stri
 
             <div className={styles.layout}>
 
-                <aside className={styles.sidebar}>
+                <aside className={`${styles.sidebar} ${styles.categorySidebar}`}>
+                    <button 
+                        className={styles.filterToggleBtn}
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    >
+                        {isFilterOpen ? 'Ocultar Categorias' : 'Mostrar Categorias'}
+                    </button>
                     <h3 className={styles.categoriasTitle}>Categorias</h3>
 
-                    <ul className={styles.categoriasLista}>
-                        {categorias.map((cat, i) => {
-                            return (
-                                <li key={i} className={styles.categoriaItem}>
-                                    <a href={`/produtos/categorias/${cat.slug}`}>
-                                        {cat.nome}
-                                    </a>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                    <div className={`${styles.filterContent} ${isFilterOpen ? styles.open : ''}`}>
+                        <ul className={styles.categoriasLista}>
+                            {categorias.map((cat, i) => {
+                                return (
+                                    <li key={i} className={styles.categoriaItem}>
+                                        <Link href={`/produtos/categorias/${cat.slug}`}>
+                                            {cat.nome}
+                                        </Link>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
                 </aside>
 
                 <main className={styles.main}>
