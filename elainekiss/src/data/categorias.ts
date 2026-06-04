@@ -88,6 +88,10 @@ export const categorias = [
     slug: "roller-clips-cracha-bilhete",
   },
   {
+    nome: "Tag",
+    slug: "tag",
+  },
+  {
     nome: "Terços e Mini Terços",
     slug: "tercos-e-mini-tercos",
   },
