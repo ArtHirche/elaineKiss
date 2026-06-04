@@ -70,7 +70,7 @@ export default function Produtos() {
 
             <div className={styles.layout}>
 
-                <aside className={styles.sidebar}>
+                <aside className={`${styles.sidebar} ${styles.categorySidebar}`}>
                     <button 
                         className={styles.filterToggleBtn}
                         onClick={() => setIsFilterOpen(!isFilterOpen)}

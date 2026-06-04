@@ -192,6 +192,7 @@
     }
 
     .search {
+        width: 100%;
         max-width: 100%;
     }
 
@@ -208,13 +209,21 @@
         width: 100%;
         display: flex;
         flex-direction: row;
+        align-items: center;
         justify-content: space-between;
-        gap: 20px;
+        gap: 15px;
+    }
+
+    .searchForm {
+        flex: 1;
+        min-width: 0;
     }
 
     .header {
         display: flex;
         flex-direction: column;
+        padding: 10px 15px;
+        gap: 12px;
     }
 
     .link_catg {
@@ -222,9 +231,18 @@
     }
 }
 
+.searchForm {
+    width: 100%;
+}
+
+.searchActive {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
 .suggestionsDropdown {
     position: absolute;
-    top: 85%;
+    top: 100%;
     left: 0;
     right: 0;
     background-color: white;
@@ -232,7 +250,7 @@
     border-top: none;
     border-radius: 0px 0px 10px 10px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    z-index: 1000;
+    z-index: 1005;
     max-height: 200px;
     overflow-y: auto;
 }
@@ -241,6 +259,7 @@
     padding: 10px 15px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
+    color: #333;
 }
 
 .suggestionItem:hover {
@@ -249,4 +268,73 @@
 
 .suggestionItem:last-child {
     border-bottom: none;
+}
+
+.mobileMenuItem {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(254, 212, 109, 0.1);
+    color: var(--fore-ground);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.mobileMenuItem a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+.mobileMenuDropdown {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid rgba(254, 212, 109, 0.1);
+}
+
+.mobileMenuDropdownHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--fore-ground);
+}
+
+.arrow {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.arrowOpen {
+    transform: rotate(90deg);
+}
+
+.mobileSubMenu {
+    background-color: rgba(0, 0, 0, 0.2);
+    margin: 5px 0 10px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.mobileSubMenuItem {
+    display: block;
+    padding: 8px 10px;
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(254, 212, 109, 0.05);
+}
+
+.mobileSubMenuItem:last-child {
+    border-bottom: none;
+}
+
+.mobileSubMenuItem:hover {
+    color: var(--fore-ground);
 }
