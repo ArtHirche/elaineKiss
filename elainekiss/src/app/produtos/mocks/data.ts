@@ -24,7 +24,7 @@ export const produtos: Produto[] = [
     { id: 16, nome: "Bolsa Infantil", preco: 35.9, categoria: "Bolsa Infantil" },
     { id: 17, nome: "Caneta Decorada", preco: 8.9, categoria: "Canetas/Lápis" },
     { id: 18, nome: "Clip de Papel", preco: 12.9, categoria: "Clips" },
-    { id: 19, nome: "Creme Hidratante", preco: 45.9, categoria: "Cremes/Batons" },
+    { id: 19, nome: "Creme Hidratante", preco: 45.9, categoria: "Cremes" },
     { id: 20, nome: "Etiqueta Adesiva", preco: 6.9, categoria: "Etiquetas" },
     { id: 21, nome: "Imã de Geladeira", preco: 9.9, categoria: "Imã de Geladeira" },
     { id: 22, nome: "Ponteira de Lápis", preco: 7.9, categoria: "Ponteira de Lápis" },
