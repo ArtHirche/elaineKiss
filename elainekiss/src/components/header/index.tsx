@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useProducts } from "@/hooks/useProducts";
-import { categorias } from "@/data/categorias";
+import { useCategories } from "@/hooks/useCategories";
 import styles from "./hearder.module.css";
 import UserMenu from "@/components/auth/UserMenu";
 
@@ -20,6 +20,8 @@ export default function Page() {
   const router = useRouter();
   const pathname = usePathname();
   const { products } = useProducts();
+  const { categories } = useCategories();
+  const activeCategories = categories.filter(cat => cat.isActive);
 
   // Close menu and suggestions on navigation
   useEffect(() => {
@@ -289,7 +291,7 @@ export default function Page() {
                 >
                   Ver todos os produtos
                 </Link>
-                {categorias.map((cat) => (
+                {activeCategories.map((cat) => (
                   <Link
                     key={cat.slug}
                     href={`/produtos/categorias/${cat.slug}`}
@@ -304,7 +306,7 @@ export default function Page() {
                     }}
                     onClick={() => setMenuOpen(false)}
                   >
-                    {cat.nome}
+                    {cat.name}
                   </Link>
                 ))}
               </div>
