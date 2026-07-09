@@ -3,11 +3,19 @@
 import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { imageService } from "@/lib/firebase/imageService";
-import { categorias } from "@/data/categorias";
+import { useCategories } from "@/hooks/useCategories";
 import styles from "./ProductManager.module.css";
 
 export default function ProductManager() {
     const { products, loading, error, createProduct, updateProduct, deleteProduct } = useProducts();
+    const { 
+        categories, 
+        createCategory, 
+        updateCategory, 
+        deleteCategory, 
+        loading: categoriesLoading 
+    } = useCategories();
+
     const [isCreating, setIsCreating] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
 
@@ -25,9 +33,80 @@ export default function ProductManager() {
     const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
 
-    const [activeTab, setActiveTab] = useState<'manage' | 'details'>('manage');
+    const [activeTab, setActiveTab] = useState<'manage' | 'details' | 'categories'>('manage');
     const [searchQuery, setSearchQuery] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
+
+    // Category form states
+    const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<any>(null);
+    const [categoryFormData, setCategoryFormData] = useState({
+        name: "",
+        description: "",
+        isActive: true,
+    });
+    const [savingCategory, setSavingCategory] = useState(false);
+
+    const resetCategoryForm = () => {
+        setCategoryFormData({
+            name: "",
+            description: "",
+            isActive: true,
+        });
+        setIsCreatingCategory(false);
+        setEditingCategory(null);
+    };
+
+    const handleEditCategory = (category: any) => {
+        setCategoryFormData({
+            name: category.name,
+            description: category.description || "",
+            isActive: category.isActive,
+        });
+        setEditingCategory(category);
+        setIsCreatingCategory(false);
+    };
+
+    const handleCategorySubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSavingCategory(true);
+        try {
+            if (editingCategory) {
+                await updateCategory(editingCategory.id, {
+                    name: categoryFormData.name,
+                    description: categoryFormData.description,
+                    isActive: categoryFormData.isActive,
+                });
+            } else {
+                await createCategory(
+                    categoryFormData.name,
+                    categoryFormData.description,
+                    categoryFormData.isActive
+                );
+            }
+            resetCategoryForm();
+        } catch (err: any) {
+            alert('Erro ao salvar categoria: ' + err.message);
+        } finally {
+            setSavingCategory(false);
+        }
+    };
+
+    const handleCategoryDelete = async (categoryId: string, categoryName: string) => {
+        const hasProducts = products.some(p => p.category === categoryName);
+        if (hasProducts) {
+            alert('Não é possível excluir esta categoria porque existem produtos associados a ela. Remova ou altere a categoria dos produtos primeiro.');
+            return;
+        }
+
+        if (window.confirm(`Tem certeza que deseja excluir a categoria "${categoryName}"?`)) {
+            try {
+                await deleteCategory(categoryId);
+            } catch (err: any) {
+                alert('Erro ao excluir categoria: ' + err.message);
+            }
+        }
+    };
 
     const filteredProducts = products.filter(product => {
         const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -218,6 +297,13 @@ export default function ProductManager() {
                 >
                     🖼️ Detalhamento Geral
                 </button>
+                <button
+                    type="button"
+                    className={`${styles.tabButton} ${activeTab === 'categories' ? styles.activeTabButton : ''}`}
+                    onClick={() => setActiveTab('categories')}
+                >
+                    📁 Categorias
+                </button>
             </div>
 
             {/* Barra de Filtros e Pesquisa */}
@@ -235,15 +321,81 @@ export default function ProductManager() {
                     onChange={(e) => setCategoryFilter(e.target.value)}
                 >
                     <option value="">📁 Todas as Categorias</option>
-                    {categorias.map(cat => (
-                        <option key={cat.slug} value={cat.nome}>
-                            {cat.nome}
+                    {categories.map(cat => (
+                        <option key={cat.slug} value={cat.name}>
+                            {cat.name}
                         </option>
                     ))}
                 </select>
             </div>
 
-            {loading ? (
+            {activeTab === 'categories' ? (
+                /* ABA 3: Categorias */
+                <div className={styles.scrollListContainer}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', padding: '10px' }}>
+                        <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#1f2937' }}>📁 Gerenciar Categorias</h2>
+                        <button 
+                            type="button"
+                            onClick={() => setIsCreatingCategory(true)}
+                            className={styles.addButton}
+                            style={{ padding: '8px 16px', fontSize: '0.9rem' }}
+                        >
+                            ➕ Nova Categoria
+                        </button>
+                    </div>
+
+                    {categoriesLoading ? (
+                        <div className={styles.loading}>
+                            <div className={styles.emptyStateIcon}>⏳</div>
+                            <p>Carregando categorias...</p>
+                        </div>
+                    ) : categories.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                            Nenhuma categoria cadastrada.
+                        </div>
+                    ) : (
+                        <div className={styles.categoriesGrid}>
+                            {categories.map((category) => (
+                                <div key={category.id} className={styles.categoryCard}>
+                                    <div>
+                                        <div className={styles.categoryCardHeader}>
+                                            <h3 className={styles.categoryCardTitle}>{category.name}</h3>
+                                            <span className={`${styles.categoryStatus} ${category.isActive ? styles.statusActive : styles.statusInactive}`}>
+                                                {category.isActive ? 'Ativo' : 'Inativo'}
+                                            </span>
+                                        </div>
+                                        <div className={styles.categoryCardBody}>
+                                            <p style={{ margin: '0 0 10px 0' }}>{category.description || 'Sem descrição'}</p>
+                                            <p style={{ margin: 0 }}>
+                                                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#6b7280' }}>Slug: </span>
+                                                <span className={styles.categorySlug}>{category.slug}</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className={styles.categoryCardActions}>
+                                        <button 
+                                            type="button"
+                                            onClick={() => handleEditCategory(category)}
+                                            className={styles.editButton}
+                                            style={{ flex: 1, padding: '6px 12px', fontSize: '0.85rem' }}
+                                        >
+                                            ✏️ Editar
+                                        </button>
+                                        <button 
+                                            type="button"
+                                            onClick={() => handleCategoryDelete(category.id!, category.name)}
+                                            className={styles.deleteButton}
+                                            style={{ flex: 1, padding: '6px 12px', fontSize: '0.85rem' }}
+                                        >
+                                            🗑️ Excluir
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            ) : loading ? (
                 <div className={styles.loading}>
                     <div className={styles.emptyStateIcon}>⏳</div>
                     <p>Carregando produtos...</p>
@@ -448,9 +600,9 @@ export default function ProductManager() {
                                     required
                                 >
                                     <option value="">Selecione uma categoria</option>
-                                    {categorias.map((cat) => (
-                                        <option key={cat.slug} value={cat.nome}>
-                                            {cat.nome}
+                                    {categories.map((cat) => (
+                                        <option key={cat.slug} value={cat.name}>
+                                            {cat.name}
                                         </option>
                                     ))}
                                 </select>
@@ -559,6 +711,84 @@ export default function ProductManager() {
                                     className={styles.saveButton}
                                 >
                                     {uploading ? 'Salvando...' : (isCreating ? 'Criar Produto' : 'Atualizar Produto')}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {(isCreatingCategory || editingCategory) && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <div className={styles.modalHeader}>
+                            <h2 className={styles.modalTitle}>
+                                {isCreatingCategory ? '📁 Cadastrar Nova Categoria' : '✏️ Editar Categoria'}
+                            </h2>
+                            <p className={styles.modalSubtitle}>
+                                {isCreatingCategory 
+                                    ? 'Preencha os dados abaixo para adicionar uma nova categoria.'
+                                    : 'Atualize as informações da categoria selecionada.'
+                                }
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleCategorySubmit} className={styles.form}>
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Nome da Categoria <span className={styles.required}>*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={categoryFormData.name}
+                                    onChange={(e) => setCategoryFormData({...categoryFormData, name: e.target.value})}
+                                    className={styles.formInput}
+                                    placeholder="Ex: Japamala"
+                                    required
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    Descrição
+                                </label>
+                                <textarea
+                                    value={categoryFormData.description}
+                                    onChange={(e) => setCategoryFormData({...categoryFormData, description: e.target.value})}
+                                    className={styles.formTextarea}
+                                    placeholder="Descreva a categoria..."
+                                    rows={3}
+                                />
+                            </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.formLabel}>
+                                    📁 Status da Categoria
+                                </label>
+                                <select
+                                    value={categoryFormData.isActive.toString()}
+                                    onChange={(e) => setCategoryFormData({...categoryFormData, isActive: e.target.value === 'true'})}
+                                    className={styles.formSelect}
+                                >
+                                    <option value="true">✅ Ativo (visível no menu)</option>
+                                    <option value="false">❌ Inativo (oculto no menu)</option>
+                                </select>
+                            </div>
+
+                            <div className={styles.modalActions}>
+                                <button
+                                    type="button"
+                                    onClick={resetCategoryForm}
+                                    className={styles.cancelButton}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={savingCategory}
+                                    className={styles.saveButton}
+                                >
+                                    {savingCategory ? 'Salvando...' : (isCreatingCategory ? 'Criar Categoria' : 'Atualizar Categoria')}
                                 </button>
                             </div>
                         </form>

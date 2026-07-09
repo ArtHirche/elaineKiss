@@ -64,6 +64,10 @@ export const categorias = [
     slug: "ima-de-geladeira",
   },
   {
+    nome: "Japamala",
+    slug: "japamala",
+  },
+  {
     nome: "Marca Página",
     slug: "marca-pagina",
   },

@@ -4,14 +4,17 @@ import styles from "../styles/produtos.module.css";
 import { useState, useEffect } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/context/CartContext";
-import { categorias } from "@/data/categorias";
+import { useCategories } from "@/hooks/useCategories";
 import { getImageSrc } from "@/lib/imageUtils";
 import Link from "next/link";
 
 export default function Produtos() {
     const [selectedCategorias, setSelectedCategorias] = useState<string[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const { products, loading, error } = useProducts();
+    const { products, loading: productsLoading, error } = useProducts();
+    const { categories, loading: categoriesLoading } = useCategories();
+    const activeCategories = categories.filter(cat => cat.isActive);
+    const loading = productsLoading || categoriesLoading;
     const { addToCart, setOpen } = useCart();
     
     const handleCategoriaChange = (categoria: string) => {
@@ -81,15 +84,15 @@ export default function Produtos() {
 
                     <div className={`${styles.filterContent} ${isFilterOpen ? styles.open : ''}`}>
                         <div className={styles.checkboxContainer}>
-                            {categorias.map((cat) => (
+                            {activeCategories.map((cat) => (
                                 <label key={cat.slug} className={styles.checkboxLabel}>
                                     <input
                                         type="checkbox"
                                         className={styles.checkbox}
-                                        checked={selectedCategorias.includes(cat.nome)}
-                                        onChange={() => handleCategoriaChange(cat.nome)}
+                                        checked={selectedCategorias.includes(cat.name)}
+                                        onChange={() => handleCategoriaChange(cat.name)}
                                     />
-                                    <span className={styles.checkboxText}>{cat.nome}</span>
+                                    <span className={styles.checkboxText}>{cat.name}</span>
                                 </label>
                             ))}
                         </div>

@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { categorias } from "@/data/categorias";
 import { useProducts } from "@/hooks/useProducts";
+import { useCategories } from "@/hooks/useCategories";
 import styles from "../../../styles/produtos.module.css";
 import Link from "next/link";
 
 export default function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
     const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const { products, loading } = useProducts();
+    const { products, loading: productsLoading } = useProducts();
+    const { categories, loading: categoriesLoading } = useCategories();
+    const activeCategories = categories.filter(cat => cat.isActive);
+    const loading = productsLoading || categoriesLoading;
 
     useEffect(() => {
         const resolveParams = async () => {
@@ -31,20 +34,20 @@ export default function CategoriaPage({ params }: { params: Promise<{ slug: stri
 
     const { slug } = resolvedParams;
     const decodedSlug = decodeURIComponent(slug);
-    const categoriaAtual = categorias.find((c) => 
+    const categoriaAtual = activeCategories.find((c) => 
         c.slug === slug || 
         c.slug === decodedSlug || 
         c.slug === decodedSlug.replace(/\s+/g, "-") ||
-        c.nome.toLowerCase() === decodedSlug.toLowerCase()
+        c.name.toLowerCase() === decodedSlug.toLowerCase()
     );
     
     // Filtrar produtos pela categoria
-    const produtosFiltrados = products.filter(p => p.category === categoriaAtual?.nome);
+    const produtosFiltrados = products.filter(p => p.category === categoriaAtual?.name);
 
     return (
         <div className={styles.container}>
 
-            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; {categoriaAtual?.nome}</div>
+            <div className={styles.breadcrumbs}><a href="/">Home</a> &gt; <a href="/produtos">Produtos</a> &gt; {categoriaAtual?.name}</div>
 
             <div className={styles.layout}>
 
@@ -59,11 +62,11 @@ export default function CategoriaPage({ params }: { params: Promise<{ slug: stri
 
                     <div className={`${styles.filterContent} ${isFilterOpen ? styles.open : ''}`}>
                         <ul className={styles.categoriasLista}>
-                            {categorias.map((cat, i) => {
+                            {activeCategories.map((cat, i) => {
                                 return (
                                     <li key={i} className={styles.categoriaItem}>
                                         <Link href={`/produtos/categorias/${cat.slug}`}>
-                                            {cat.nome}
+                                            {cat.name}
                                         </Link>
                                     </li>
                                 );
