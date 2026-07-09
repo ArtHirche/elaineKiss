@@ -25,6 +25,17 @@ export default function ProductManager() {
     const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
 
+    const [activeTab, setActiveTab] = useState<'manage' | 'details'>('manage');
+    const [searchQuery, setSearchQuery] = useState("");
+    const [categoryFilter, setCategoryFilter] = useState("");
+
+    const filteredProducts = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              (product.description || "").toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = categoryFilter === "" || product.category === categoryFilter;
+        return matchesSearch && matchesCategory;
+    });
+
     const resetForm = () => {
         console.log('ProductManager: Resetting form');
         setFormData({
@@ -191,6 +202,47 @@ export default function ProductManager() {
                 </div>
             )}
 
+            {/* Barra de Abas */}
+            <div className={styles.tabsContainer}>
+                <button
+                    type="button"
+                    className={`${styles.tabButton} ${activeTab === 'manage' ? styles.activeTabButton : ''}`}
+                    onClick={() => setActiveTab('manage')}
+                >
+                    📋 Cadastro & Lista
+                </button>
+                <button
+                    type="button"
+                    className={`${styles.tabButton} ${activeTab === 'details' ? styles.activeTabButton : ''}`}
+                    onClick={() => setActiveTab('details')}
+                >
+                    🖼️ Detalhamento Geral
+                </button>
+            </div>
+
+            {/* Barra de Filtros e Pesquisa */}
+            <div className={styles.filterBar}>
+                <input
+                    type="text"
+                    className={styles.filterInput}
+                    placeholder="🔍 Buscar produto por nome ou descrição..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <select
+                    className={styles.filterSelect}
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                >
+                    <option value="">📁 Todas as Categorias</option>
+                    {categorias.map(cat => (
+                        <option key={cat.slug} value={cat.nome}>
+                            {cat.nome}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
             {loading ? (
                 <div className={styles.loading}>
                     <div className={styles.emptyStateIcon}>⏳</div>
@@ -210,85 +262,148 @@ export default function ProductManager() {
                         🛒 Cadastrar Primeiro Produto
                     </button>
                 </div>
-            ) : (
-                <div className={styles.productsList}>
-                    {products.map((product) => (
-                        <div key={product.id} className={styles.productCard}>
-                            <div className={styles.productHeader}>
-                                <h3 className={styles.productName}>
-                                    {product.name} 
-                                    {product.isActive ? '✅' : '❌'}
-                                </h3>
-                                <p className={styles.productPrice}>
-                                    💰 R$ {product.price.toFixed(2)}
-                                </p>
-                            </div>
-                            
-                            <div className={styles.productInfo}>
-                                <div className={styles.infoItem}>
-                                    <span className={styles.infoLabel}>📂 Categoria</span>
-                                    <span className={styles.infoValue}>{product.category}</span>
-                                </div>
-                                <div className={styles.infoItem}>
-                                    <span className={styles.infoLabel}>📅 Data</span>
-                                    <span className={styles.infoValue}>
-                                        {product.createdAt?.toDate?.()?.toLocaleDateString?.('pt-BR') || 'N/A'}
-                                    </span>
-                                </div>
-                                {product.fileName && (
-                                    <div className={styles.infoItem}>
-                                        <span className={styles.infoLabel}>📎 Arquivo</span>
-                                        <span className={styles.infoValue}>{product.fileName}</span>
-                                    </div>
-                                )}
-                                {product.fileType && (
-                                    <div className={styles.infoItem}>
-                                        <span className={styles.infoLabel}>📄 Tipo</span>
-                                        <span className={styles.infoValue}>{product.fileType}</span>
-                                    </div>
-                                )}
-                            </div>
-                            
-                            {product.description && (
-                                <p className={styles.productDescription}>
-                                    📝 {product.description}
-                                </p>
-                            )}
-                            
-                            {product.imageUrl && (
-                                <div style={{ marginTop: '12px' }}>
-                                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                                        Imagem: {product.imageUrl.substring(0, 60)}...
-                                    </div>
-                                    <img 
-                                        src={product.imageUrl} 
-                                        alt={product.name} 
-                                        className={styles.productImage}
-                                        onLoad={() => console.log('✅ Imagem carregada:', product.name)}
-                                        onError={(e) => {
-                                            console.error('❌ Erro ao carregar imagem:', product.name);
-                                            e.currentTarget.src = `https://picsum.photos/seed/fallback-${Date.now()}/300/200.jpg`;
-                                        }}
-                                    />
-                                </div>
-                            )}
-                            
-                            <div className={styles.productActions}>
-                                <button 
-                                    onClick={() => handleEdit(product)}
-                                    className={styles.editButton}
-                                >
-                                    ✏️ Editar
-                                </button>
-                                <button 
-                                    onClick={() => handleDelete(product.id!)}
-                                    className={styles.deleteButton}
-                                >
-                                    🗑️ Excluir
-                                </button>
-                            </div>
+            ) : activeTab === 'manage' ? (
+                /* ABA 1: Cadastro & Lista */
+                <div className={styles.scrollListContainer}>
+                    {filteredProducts.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                            Nenhum produto corresponde aos filtros aplicados.
                         </div>
-                    ))}
+                    ) : (
+                        <div className={styles.productsList}>
+                            {filteredProducts.map((product) => (
+                                <div key={product.id} className={styles.productCard}>
+                                    <div className={styles.productHeader}>
+                                        <h3 className={styles.productName}>
+                                            {product.name} 
+                                            {product.isActive ? ' ✅' : ' ❌'}
+                                        </h3>
+                                        <p className={styles.productPrice}>
+                                            💰 R$ {product.price.toFixed(2)}
+                                        </p>
+                                    </div>
+                                    
+                                    <div className={styles.productInfo}>
+                                        <div className={styles.infoItem}>
+                                            <span className={styles.infoLabel}>📂 Categoria</span>
+                                            <span className={styles.infoValue}>{product.category}</span>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <span className={styles.infoLabel}>📅 Data</span>
+                                            <span className={styles.infoValue}>
+                                                {product.createdAt?.toDate?.()?.toLocaleDateString?.('pt-BR') || 'N/A'}
+                                            </span>
+                                        </div>
+                                        {product.fileName && (
+                                            <div className={styles.infoItem}>
+                                                <span className={styles.infoLabel}>📎 Arquivo</span>
+                                                <span className={styles.infoValue}>{product.fileName}</span>
+                                            </div>
+                                        )}
+                                        {product.fileType && (
+                                            <div className={styles.infoItem}>
+                                                <span className={styles.infoLabel}>📄 Tipo</span>
+                                                <span className={styles.infoValue}>{product.fileType}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    {product.description && (
+                                        <p className={styles.productDescription}>
+                                            📝 {product.description}
+                                        </p>
+                                    )}
+                                    
+                                    {product.imageUrl && (
+                                        <div style={{ marginTop: '12px' }}>
+                                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                                                Imagem: {product.imageUrl.substring(0, 60)}...
+                                            </div>
+                                            <img 
+                                                src={product.imageUrl} 
+                                                alt={product.name} 
+                                                className={styles.productImage}
+                                                onLoad={() => console.log('✅ Imagem carregada:', product.name)}
+                                                onError={(e) => {
+                                                    console.error('❌ Erro ao carregar imagem:', product.name);
+                                                    e.currentTarget.src = `https://picsum.photos/seed/fallback-${Date.now()}/300/200.jpg`;
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                    
+                                    <div className={styles.productActions}>
+                                        <button 
+                                            onClick={() => handleEdit(product)}
+                                            className={styles.editButton}
+                                        >
+                                            ✏️ Editar
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDelete(product.id!)}
+                                            className={styles.deleteButton}
+                                        >
+                                            🗑️ Excluir
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            ) : (
+                /* ABA 2: Detalhamento Geral */
+                <div className={styles.scrollListContainer}>
+                    {filteredProducts.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                            Nenhum produto corresponde aos filtros aplicados.
+                        </div>
+                    ) : (
+                        <div className={styles.detailsGrid}>
+                            {filteredProducts.map((product) => {
+                                const formattedDate = product.updatedAt?.toDate?.()?.toLocaleDateString?.('pt-BR') || 
+                                                      product.createdAt?.toDate?.()?.toLocaleDateString?.('pt-BR') || 
+                                                      'N/A';
+                                return (
+                                    <div 
+                                        key={product.id} 
+                                        className={styles.detailCard}
+                                        onClick={() => window.open(`/produtos/${product.id}`, '_blank')}
+                                        title="Clique para abrir a página do produto"
+                                    >
+                                        <div className={styles.detailCardTitle}>
+                                            {product.name}
+                                        </div>
+                                        <div className={styles.detailCardBody}>
+                                            <div className={styles.detailCardImageContainer}>
+                                                <img 
+                                                    src={product.imageUrl || "/produtos/default.jpg"} 
+                                                    alt={product.name} 
+                                                    className={styles.detailCardImage} 
+                                                    onError={(e) => {
+                                                        e.currentTarget.src = "/produtos/default.jpg";
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className={styles.detailCardInfo}>
+                                                <div className={styles.detailCardPrice}>
+                                                    R$ {product.price.toFixed(2)}
+                                                </div>
+                                                <div className={styles.detailCardCategory}>
+                                                    <span className={styles.categoryLabel}>Categorias:</span>
+                                                    <span className={styles.categoryValue}>{product.category}</span>
+                                                </div>
+                                                <div className={styles.updateBox}>
+                                                    <div className={styles.updateBoxLabel}>Última Atualização:</div>
+                                                    <div className={styles.updateBoxValue}>{formattedDate}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
             )}
 
