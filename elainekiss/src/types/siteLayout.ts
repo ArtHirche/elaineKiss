@@ -25,6 +25,7 @@ export interface HeroConfig {
   subtitle: string;
   buttonText: string;
   buttonUrl: string;
+  artisanImage?: string;
   bgMode: 'gradient' | 'image' | 'solid';
   bgImage: string;
   bgColor: string;
@@ -65,6 +66,18 @@ export interface FooterConfig {
   whatsappNumber: string;
 }
 
+export interface ColorPreset {
+  id?: string;
+  name: string;
+  primary: string;
+  secondary: string;
+  background: string;
+  cardBackground: string;
+  headerBackground: string;
+  gradient?: string;
+  isCustom?: boolean;
+}
+
 export type SectionId = 'announcement' | 'hero' | 'recentProducts' | 'promoBanner' | 'aboutUs';
 
 export interface SiteLayoutConfig {
@@ -76,6 +89,7 @@ export interface SiteLayoutConfig {
   recentProducts: RecentProductsConfig;
   footer: FooterConfig;
   sectionOrder: SectionId[];
+  customPresets?: ColorPreset[];
   lastUpdated?: string;
 }
 
@@ -105,6 +119,7 @@ export const DEFAULT_SITE_LAYOUT: SiteLayoutConfig = {
     subtitle: "Acessórios únicos e artesanais com muito amor e carinho para você",
     buttonText: "Ver Todos os Produtos",
     buttonUrl: "/produtos",
+    artisanImage: "/images/elaine_pic.jpg",
     bgMode: "gradient",
     bgImage: "",
     bgColor: "#fff0f5",

@@ -333,8 +333,8 @@ export default function ProductManager() {
                             onChange={(e) => setCategoryFilter(e.target.value)}
                         >
                             <option value="">📁 Todas as Categorias</option>
-                            {categories.map(cat => (
-                                <option key={cat.slug} value={cat.name}>
+                            {categories.map((cat, idx) => (
+                                <option key={cat.id || `${cat.slug}-${idx}`} value={cat.name}>
                                     {cat.name}
                                 </option>
                             ))}
@@ -367,8 +367,8 @@ export default function ProductManager() {
                         </div>
                     ) : (
                         <div className={styles.categoriesGrid}>
-                            {categories.map((category) => (
-                                <div key={category.id} className={styles.categoryCard}>
+                            {categories.map((category, idx) => (
+                                <div key={category.id || `${category.slug}-${idx}`} className={styles.categoryCard}>
                                     <div>
                                         <div className={styles.categoryCardHeader}>
                                             <h3 className={styles.categoryCardTitle}>{category.name}</h3>
@@ -612,8 +612,8 @@ export default function ProductManager() {
                                     required
                                 >
                                     <option value="">Selecione uma categoria</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.slug} value={cat.name}>
+                                    {categories.map((cat, idx) => (
+                                        <option key={cat.id || `${cat.slug}-${idx}`} value={cat.name}>
                                             {cat.name}
                                         </option>
                                     ))}

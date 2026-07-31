@@ -3,9 +3,19 @@
 import React, { useState } from 'react';
 import { useSiteLayout } from '@/hooks/useSiteLayout';
 import { SectionId, SiteLayoutConfig } from '@/types/siteLayout';
+import { imageService } from '@/lib/firebase/imageService';
 import styles from './VisualLayoutEditor.module.css';
 
 const PRESET_PALETTES = [
+  {
+    name: 'Azul Elaine',
+    primary: '#060748',
+    secondary: '#3a3c85',
+    background: '#ffffff',
+    cardBackground: '#f8fafc',
+    headerBackground: '#060748',
+    gradient: 'linear-gradient(135deg, #060748 0%, #3a3c85 100%)',
+  },
   {
     name: 'Rosa Chic',
     primary: '#e91e63',
@@ -43,6 +53,33 @@ const PRESET_PALETTES = [
     gradient: 'linear-gradient(135deg, #00897b 0%, #4db6ac 100%)',
   },
   {
+    name: 'Pêssego Warm',
+    primary: '#e07a5f',
+    secondary: '#f2cc8f',
+    background: '#fffdfa',
+    cardBackground: '#fefae0',
+    headerBackground: '#ffffff',
+    gradient: 'linear-gradient(135deg, #e07a5f 0%, #f2cc8f 100%)',
+  },
+  {
+    name: 'Oceano Sereno',
+    primary: '#0077b6',
+    secondary: '#90e0ef',
+    background: '#f8fafc',
+    cardBackground: '#ffffff',
+    headerBackground: '#0077b6',
+    gradient: 'linear-gradient(135deg, #0077b6 0%, #00b4d8 100%)',
+  },
+  {
+    name: 'Lavanda Soft',
+    primary: '#8e7dbe',
+    secondary: '#c8b6ff',
+    background: '#fbfaff',
+    cardBackground: '#ffffff',
+    headerBackground: '#8e7dbe',
+    gradient: 'linear-gradient(135deg, #8e7dbe 0%, #b8c0ff 100%)',
+  },
+  {
     name: 'Dark Luxury',
     primary: '#f48fb1',
     secondary: '#ce93d8',
@@ -77,7 +114,27 @@ export default function VisualLayoutEditor() {
   const [activeTab, setActiveTab] = useState<'theme' | 'hero' | 'announcement' | 'recentProducts'>('theme');
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [notification, setNotification] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(700);
+
   const iframeRef = React.useRef<HTMLIFrameElement>(null);
+  const previewContainerRef = React.useRef<HTMLDivElement>(null);
+
+  // ResizeObserver para medir a largura real disponivel do container de preview
+  React.useEffect(() => {
+    if (!previewContainerRef.current) return;
+    const updateWidth = () => {
+      if (previewContainerRef.current) {
+        const w = previewContainerRef.current.clientWidth - 40; // descontando padding
+        setContainerWidth(w > 0 ? w : 700);
+      }
+    };
+
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(previewContainerRef.current);
+    return () => observer.disconnect();
+  }, [sidebarCollapsed, deviceView]);
 
   // Enviar alterações para o iframe em tempo real via postMessage
   const syncPreviewIframe = () => {
@@ -118,15 +175,116 @@ export default function VisualLayoutEditor() {
     });
   };
 
-  const getPreviewWidth = () => {
-    switch (deviceView) {
-      case 'mobile':
-        return '375px';
-      case 'tablet':
-        return '768px';
-      default:
-        return '100%';
+  const handleCreateCustomPreset = () => {
+    const name = prompt('Digite o nome do seu novo Preset de Cores:');
+    if (!name || !name.trim()) return;
+
+    const newPreset = {
+      id: `preset-${Date.now()}`,
+      name: name.trim(),
+      primary: layoutConfig.theme.primary,
+      secondary: layoutConfig.theme.secondary,
+      background: layoutConfig.theme.background,
+      cardBackground: layoutConfig.theme.cardBackground,
+      headerBackground: layoutConfig.theme.headerBackground,
+      gradient: layoutConfig.theme.accentGradient,
+      isCustom: true,
+    };
+
+    const updatedCustomPresets = [...(layoutConfig.customPresets || []), newPreset];
+    setLayoutConfig((prev) => ({
+      ...prev,
+      customPresets: updatedCustomPresets,
+    }));
+    showNotification(`✅ Preset "${name.trim()}" criado com sucesso!`);
+  };
+
+  const handleDeleteCustomPreset = (presetId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm('Deseja excluir este preset customizado?')) {
+      const updated = (layoutConfig.customPresets || []).filter(p => p.id !== presetId);
+      setLayoutConfig((prev) => ({
+        ...prev,
+        customPresets: updated,
+      }));
     }
+  };
+
+  const handleUpdateCustomPreset = (presetId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const presetIndex = (layoutConfig.customPresets || []).findIndex(p => p.id === presetId);
+    if (presetIndex === -1) return;
+
+    const presetName = layoutConfig.customPresets![presetIndex].name;
+    const updatedCustomPresets = [...(layoutConfig.customPresets || [])];
+    updatedCustomPresets[presetIndex] = {
+      ...updatedCustomPresets[presetIndex],
+      primary: layoutConfig.theme.primary,
+      secondary: layoutConfig.theme.secondary,
+      background: layoutConfig.theme.background,
+      cardBackground: layoutConfig.theme.cardBackground,
+      headerBackground: layoutConfig.theme.headerBackground,
+      gradient: layoutConfig.theme.accentGradient,
+    };
+
+    setLayoutConfig((prev) => ({
+      ...prev,
+      customPresets: updatedCustomPresets,
+    }));
+
+    showNotification(`💾 Cores do preset "${presetName}" foram atualizadas com sucesso!`);
+  };
+
+  const allPresets = [
+    ...PRESET_PALETTES,
+    ...(layoutConfig.customPresets || []).map(p => ({
+      ...p,
+      gradient: p.gradient || `linear-gradient(135deg, ${p.primary} 0%, ${p.secondary} 100%)`,
+    })),
+  ];
+
+  const getTargetWidth = () => {
+    switch (deviceView) {
+      case 'tablet':
+        return 768;
+      case 'mobile':
+        return 375;
+      default:
+        return 1280;
+    }
+  };
+
+  const targetWidth = getTargetWidth();
+  const deviceScale = Math.min(containerWidth / targetWidth, 1);
+
+  const getWrapperStyle = (): React.CSSProperties => {
+    const baseHeight = deviceView === 'mobile' ? 700 : 850;
+    const renderWidth = targetWidth * deviceScale;
+    const renderHeight = baseHeight * deviceScale;
+
+    return {
+      width: `${renderWidth}px`,
+      height: `${renderHeight}px`,
+      overflow: 'hidden',
+      position: 'relative',
+      borderRadius: '12px',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+      background: '#ffffff',
+      margin: '0 auto',
+      transition: 'width 0.3s ease, height 0.3s ease',
+    };
+  };
+
+  const getIframeStyle = (): React.CSSProperties => {
+    const baseHeight = deviceView === 'mobile' ? 700 : 850;
+
+    return {
+      width: `${targetWidth}px`,
+      height: `${baseHeight}px`,
+      transform: deviceScale < 1 ? `scale(${deviceScale})` : 'none',
+      transformOrigin: 'top left',
+      border: 'none',
+    };
   };
 
   return (
@@ -179,6 +337,13 @@ export default function VisualLayoutEditor() {
 
           <button
             className={styles.btnSecondary}
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          >
+            {sidebarCollapsed ? '▶ Expandir Controles' : '◀ Ocultar Controles'}
+          </button>
+
+          <button
+            className={styles.btnSecondary}
             onClick={() => setIsInlineEditMode(!isInlineEditMode)}
             style={{
               borderColor: isInlineEditMode ? '#e91e63' : undefined,
@@ -199,7 +364,7 @@ export default function VisualLayoutEditor() {
       </div>
 
       {/* Main Split Grid */}
-      <div className={styles.editorGrid}>
+      <div className={`${styles.editorGrid} ${sidebarCollapsed ? styles.editorGridCollapsed : ''}`}>
         {/* Left Sidebar Controls */}
         <div className={styles.controlSidebar}>
           <div className={styles.tabHeader}>
@@ -234,11 +399,29 @@ export default function VisualLayoutEditor() {
             {activeTab === 'theme' && (
               <>
                 <div className={styles.formGroup}>
-                  <label>Paletas Prontas Recomendadas</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ margin: 0 }}>Paletas de Cores & Presets</label>
+                    <button
+                      type="button"
+                      onClick={handleCreateCustomPreset}
+                      style={{
+                        background: '#fce4ec',
+                        color: '#e91e63',
+                        border: '1px solid #f48fb1',
+                        borderRadius: '6px',
+                        padding: '4px 10px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      ➕ Criar Novo Preset
+                    </button>
+                  </div>
                   <div className={styles.presetsGrid}>
-                    {PRESET_PALETTES.map((p) => (
+                    {allPresets.map((p, idx) => (
                       <div
-                        key={p.name}
+                        key={(p as any).id || p.name || idx}
                         className={styles.presetCard}
                         onClick={() => applyPalette(p)}
                       >
@@ -247,7 +430,59 @@ export default function VisualLayoutEditor() {
                           <div className={styles.presetSwatch} style={{ background: p.secondary }} />
                           <div className={styles.presetSwatch} style={{ background: p.background }} />
                         </div>
-                        <div className={styles.presetLabel}>{p.name}</div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                          <div
+                            className={styles.presetLabel}
+                            style={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              flex: 1,
+                            }}
+                          >
+                            {p.name} {(p as any).isCustom ? '⭐' : ''}
+                          </div>
+
+                          {(p as any).isCustom && (
+                            <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                              <button
+                                type="button"
+                                onClick={(e) => handleUpdateCustomPreset((p as any).id!, e)}
+                                style={{
+                                  background: '#eff6ff',
+                                  color: '#2563eb',
+                                  border: '1px solid #bfdbfe',
+                                  borderRadius: '6px',
+                                  padding: '2px 6px',
+                                  fontSize: '0.72rem',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                }}
+                                title="Salvar as cores atuais selecionadas neste preset"
+                              >
+                                💾
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => handleDeleteCustomPreset((p as any).id!, e)}
+                                style={{
+                                  background: '#fef2f2',
+                                  color: '#ef4444',
+                                  border: '1px solid #fecaca',
+                                  borderRadius: '6px',
+                                  padding: '2px 6px',
+                                  fontSize: '0.72rem',
+                                  cursor: 'pointer',
+                                  fontWeight: 600,
+                                }}
+                                title="Excluir preset"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -356,6 +591,52 @@ export default function VisualLayoutEditor() {
                     value={layoutConfig.hero.subtitle}
                     onChange={(e) => updateSectionConfig('hero', { subtitle: e.target.value })}
                   />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Imagem da Artesã / Destaque da Home</label>
+                  <input
+                    type="text"
+                    className={styles.formInput}
+                    placeholder="/images/elaine_pic.jpg ou URL da imagem"
+                    value={layoutConfig.hero.artisanImage || ''}
+                    onChange={(e) => updateSectionConfig('hero', { artisanImage: e.target.value })}
+                  />
+                  <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <label
+                      style={{
+                        background: '#f3f4f6',
+                        border: '1px solid #d1d5db',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        color: '#374151',
+                      }}
+                    >
+                      📁 Enviar Nova Imagem
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            try {
+                              const url = await imageService.uploadProductImage(file);
+                              updateSectionConfig('hero', { artisanImage: url });
+                            } catch (err: any) {
+                              alert('Erro ao enviar imagem: ' + err.message);
+                            }
+                          }
+                        }}
+                      />
+                    </label>
+                    <span style={{ fontSize: '0.78rem', color: '#6b7280' }}>
+                      (Formatos: JPG, PNG, WEBP)
+                    </span>
+                  </div>
                 </div>
 
                 <div className={styles.formGroup}>
@@ -485,13 +766,13 @@ export default function VisualLayoutEditor() {
         </div>
 
         {/* Right Live Screen Preview Frame */}
-        <div className={styles.previewContainer}>
-          <div className={styles.previewWrapper} style={{ width: getPreviewWidth() }}>
+        <div className={styles.previewContainer} ref={previewContainerRef}>
+          <div style={getWrapperStyle()}>
             <iframe
               ref={iframeRef}
               src="/"
               title="Site Live Preview"
-              className={styles.previewFrame}
+              style={getIframeStyle()}
               onLoad={syncPreviewIframe}
             />
           </div>

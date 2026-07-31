@@ -129,7 +129,7 @@ export default function Home() {
 
                     <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
                         <img
-                            src="/images/elaine_pic.jpg"
+                            src={hero.artisanImage || "/images/elaine_pic.jpg"}
                             alt="Foto da artesã"
                             className={styles.fotoArtesa}
                         />

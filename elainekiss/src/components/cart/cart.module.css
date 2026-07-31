@@ -16,7 +16,7 @@
 .drawer {
     position: fixed;
     bottom: 0;
-    right: -400px;
+    right: -100%;
     width: 400px;
     height: 87vh;
     background: var(--back-ground);
@@ -35,11 +35,12 @@
         height: 80vh;
         border-left: none;
         border-top: 2px solid var(--fore-ground);
+        right: -100%;
     }
 }
 
 .open {
-    right: 0;
+    right: 0 !important;
 }
 
 .list {

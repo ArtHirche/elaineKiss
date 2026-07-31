@@ -77,7 +77,7 @@
   background: #ffffff;
   color: #e91e63;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .btnPrimary {
@@ -120,19 +120,22 @@
   grid-template-columns: 420px 1fr;
   gap: 24px;
   min-height: 750px;
+  transition: all 0.3s ease;
 }
 
-@media (max-width: 1024px) {
-  .editorGrid {
-    grid-template-columns: 1fr;
-  }
+.editorGridCollapsed {
+  grid-template-columns: 1fr;
+}
+
+.editorGridCollapsed .controlSidebar {
+  display: none;
 }
 
 .controlSidebar {
   background: #ffffff;
   border-radius: 16px;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -167,7 +170,7 @@
   background: #ffffff;
   color: #e91e63;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .tabBody {
@@ -191,7 +194,9 @@
   color: #374151;
 }
 
-.formInput, .formTextarea, .formSelect {
+.formInput,
+.formTextarea,
+.formSelect {
   width: 100%;
   padding: 10px 14px;
   border-radius: 8px;
@@ -202,7 +207,9 @@
   color: #111827;
 }
 
-.formInput:focus, .formTextarea:focus, .formSelect:focus {
+.formInput:focus,
+.formTextarea:focus,
+.formSelect:focus {
   outline: none;
   border-color: #e91e63;
   box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15);
@@ -233,31 +240,32 @@
 
 .presetsGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 
 .presetCard {
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  padding: 8px;
+  padding: 10px;
   cursor: pointer;
-  text-align: center;
   transition: all 0.2s ease;
+  background: #ffffff;
 }
 
 .presetCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border-color: #e91e63;
 }
 
 .presetSwatches {
   display: flex;
-  height: 16px;
-  border-radius: 4px;
+  height: 20px;
+  border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
 .presetSwatch {
@@ -265,9 +273,9 @@
 }
 
 .presetLabel {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #4b5563;
+  color: #374151;
 }
 
 .toggleRow {
@@ -302,7 +310,10 @@
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
   transition: .3s;
   border-radius: 24px;
@@ -320,11 +331,11 @@
   border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: #e91e63;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(22px);
 }
 
@@ -374,14 +385,17 @@ input:checked + .slider:before {
   padding: 20px;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  overflow: auto;
+  align-items: center;
+  overflow: hidden;
   border: 1px solid #d1d5db;
+  min-height: 750px;
+  width: 100%;
+  transition: all 0.3s ease;
 }
 
 .previewWrapper {
   background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   border-radius: 12px;
   overflow: hidden;
   transition: width 0.3s ease;

@@ -26,6 +26,7 @@ export const siteLayoutService = {
           recentProducts: { ...DEFAULT_SITE_LAYOUT.recentProducts, ...(data.recentProducts || {}) },
           footer: { ...DEFAULT_SITE_LAYOUT.footer, ...(data.footer || {}) },
           sectionOrder: data.sectionOrder || DEFAULT_SITE_LAYOUT.sectionOrder,
+          customPresets: data.customPresets || [],
         };
       }
 
