@@ -10,18 +10,18 @@ export default function Home() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const { products, loading } = useProducts();
     const { layoutConfig, isInlineEditMode, updateSectionConfig } = useSiteLayout();
-    
-    // Check for mobile layout for carousel
+
+    // Verificar se está em mobile para ajustar o carrossel
     const [isMobile, setIsMobile] = useState(false);
-    
+
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth <= 768);
         };
-        
+
         checkMobile();
         window.addEventListener('resize', checkMobile);
-        
+
         return () => {
             window.removeEventListener('resize', checkMobile);
         };
@@ -63,7 +63,7 @@ export default function Home() {
     };
 
     const ProdutoCard = ({ produto, isMobile, currentIndex, index }: { produto: any; isMobile?: boolean; currentIndex?: number; index?: number }) => (
-        <div 
+        <div
             className={styles.carouselItem}
             style={{
                 display: isMobile ? (index === currentIndex ? 'block' : 'none') : 'block'
@@ -71,11 +71,11 @@ export default function Home() {
         >
             <Link href={`/produtos/${produto.id}`} className={styles.card}>
                 <span className={`${styles.tag} ${styles.tagNovo}`}>NOVO</span>
-                
+
                 <img src={produto.imagem} alt={produto.nome} className={styles.img} />
-                
+
                 <h3 className={styles.nome}>{produto.nome}</h3>
-                
+
                 <span className={styles.preco}>R$ {produto.preco.toFixed(2)}</span>
             </Link>
         </div>
@@ -127,6 +127,14 @@ export default function Home() {
                         {hero.subtitle || 'Acessórios únicos e artesanais com muito amor e carinho para você'}
                     </p>
 
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
+                        <img
+                            src="/images/elaine_pic.jpg"
+                            alt="Foto da artesã"
+                            className={styles.fotoArtesa}
+                        />
+                    </div>
+
                     {hero.buttonText && (
                         <Link
                             href={hero.buttonUrl || '/produtos'}
@@ -152,34 +160,34 @@ export default function Home() {
                         >
                             {recentProducts.title || '🌟 Produtos Recentes'}
                         </h2>
-                        
+
                         <div className={styles.carousel}>
-                            <button 
+                            <button
                                 className={`${styles.carouselButton} ${styles.prev}`}
                                 onClick={prevSlide}
                                 disabled={currentIndex === 0}
                             >
                                 ‹
                             </button>
-                            
-                            <button 
+
+                            <button
                                 className={`${styles.carouselButton} ${styles.next}`}
                                 onClick={nextSlide}
                                 disabled={currentIndex >= maxIndex}
                             >
                                 ›
                             </button>
-                            
-                            <div 
+
+                            <div
                                 className={styles.carouselContainer}
                                 style={{
                                     transform: isMobile ? 'none' : `translateX(-${currentIndex * 330}px)`
                                 }}
                             >
                                 {produtosRecentes.map((produto, index) => (
-                                    <ProdutoCard 
-                                        key={produto.id} 
-                                        produto={produto} 
+                                    <ProdutoCard
+                                        key={produto.id}
+                                        produto={produto}
                                         isMobile={isMobile}
                                         currentIndex={currentIndex}
                                         index={index}
@@ -187,7 +195,7 @@ export default function Home() {
                                 ))}
                             </div>
                         </div>
-                        
+
                         <div className={styles.carouselDots}>
                             {Array.from({ length: totalDots }, (_, i) => (
                                 <button
