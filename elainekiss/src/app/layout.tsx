@@ -12,6 +12,9 @@ import CartDrawer from '../components/cart/CartDrawer';
 import WhatsAppFloat from '../components/WhatsAppFloat';
 import AuthProvider from '../components/auth/AuthProvider';
 
+import { SiteLayoutProvider } from '../context/SiteLayoutContext';
+import InlineFrontEditorToolbar from '../components/admin/InlineFrontEditorToolbar';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,24 +34,28 @@ export default function RootLayout({
   const isAuthRoute = pathname && (pathname.startsWith('/login') || pathname.startsWith('/cadastro') || pathname.startsWith('/auth') || pathname.startsWith('/reset-password'));
 
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <CartProvider>
-            {!isAuthRoute && <Header />}
+          <SiteLayoutProvider>
+            <CartProvider>
+              {!isAuthRoute && <Header />}
 
-            {!isAuthRoute && <div className="headerSpacer" />}
+              {!isAuthRoute && <div className="headerSpacer" />}
 
-            {children}
+              {children}
 
-            {!isAuthRoute && <Footer />}
+              {!isAuthRoute && <Footer />}
 
-            {!isAuthRoute && <CartDrawer />}
+              {!isAuthRoute && <CartDrawer />}
 
-            {!isAuthRoute && <WhatsAppFloat />}
-          </CartProvider>
+              {!isAuthRoute && <WhatsAppFloat />}
+
+              <InlineFrontEditorToolbar />
+            </CartProvider>
+          </SiteLayoutProvider>
         </AuthProvider>
       </body>
     </html>

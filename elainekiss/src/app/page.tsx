@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./styles/home.module.css";
 import { useProducts } from "@/hooks/useProducts";
+import { useSiteLayout } from "@/hooks/useSiteLayout";
 
 export default function Home() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const { products, loading } = useProducts();
+    const { layoutConfig, isInlineEditMode, updateSectionConfig } = useSiteLayout();
     
-    // Verificar se está em mobile para ajustar o carrossel
+    // Check for mobile layout for carousel
     const [isMobile, setIsMobile] = useState(false);
     
     useEffect(() => {
@@ -26,9 +28,10 @@ export default function Home() {
     }, []);
 
     const itemsPerView = isMobile ? 1 : 4;
+    const maxItems = layoutConfig?.recentProducts?.maxItems || 8;
 
-    // Pegar apenas os 8 produtos mais recentes para o carrossel
-    const produtosRecentes = products.slice(0, 8).map(product => ({
+    // Get recent products
+    const produtosRecentes = products.slice(0, maxItems).map(product => ({
         id: product.id,
         nome: product.name,
         preco: product.price,
@@ -49,6 +52,14 @@ export default function Home() {
 
     const goToSlide = (index: number) => {
         setCurrentIndex(index);
+    };
+
+    const handleInlineTextEdit = (section: any, key: string, currentVal: string) => {
+        if (!isInlineEditMode) return;
+        const newVal = prompt(`Editar texto (${key}):`, currentVal);
+        if (newVal !== null && newVal.trim() !== "") {
+            updateSectionConfig(section, { [key]: newVal.trim() });
+        }
     };
 
     const ProdutoCard = ({ produto, isMobile, currentIndex, index }: { produto: any; isMobile?: boolean; currentIndex?: number; index?: number }) => (
@@ -82,68 +93,112 @@ export default function Home() {
         );
     }
 
+    const hero = layoutConfig?.hero || {
+        enabled: true,
+        title: "Elaine Kiss",
+        subtitle: "Acessórios únicos e artesanais com muito amor e carinho para você",
+        buttonText: "Ver Todos os Produtos",
+        buttonUrl: "/produtos",
+    };
+
+    const recentProducts = layoutConfig?.recentProducts || {
+        enabled: true,
+        title: "🌟 Produtos Recentes",
+    };
+
     return (
         <div className={styles.container}>
-            <header className={styles.header}>
-                <h1 className={styles.title}>Elaine Kiss</h1>
-                <p className={styles.subtitle}>
-                    Acessórios únicos e artesanais com muito amor e carinho para você
-                </p>
-                <Link href="/produtos" className={styles.botaoProdutos}>
-                    Ver Todos os Produtos
-                </Link>
-            </header>
+            {hero.enabled && (
+                <header className={styles.header}>
+                    <h1
+                        className={styles.title}
+                        style={{ cursor: isInlineEditMode ? 'pointer' : 'default' }}
+                        onClick={() => handleInlineTextEdit('hero', 'title', hero.title)}
+                        title={isInlineEditMode ? 'Clique para editar o título' : undefined}
+                    >
+                        {hero.title || 'Elaine Kiss'}
+                    </h1>
+                    <p
+                        className={styles.subtitle}
+                        style={{ cursor: isInlineEditMode ? 'pointer' : 'default' }}
+                        onClick={() => handleInlineTextEdit('hero', 'subtitle', hero.subtitle)}
+                        title={isInlineEditMode ? 'Clique para editar o subtítulo' : undefined}
+                    >
+                        {hero.subtitle || 'Acessórios únicos e artesanais com muito amor e carinho para você'}
+                    </p>
 
-            <main>
-                {/* Produtos Recentes em Carrossel */}
-                <section className={styles.section}>
-                    <h2 className={styles.sectionTitle}>🌟 Produtos Recentes</h2>
-                    
-                    <div className={styles.carousel}>
-                        <button 
-                            className={`${styles.carouselButton} ${styles.prev}`}
-                            onClick={prevSlide}
-                            disabled={currentIndex === 0}
-                        >
-                            ‹
-                        </button>
-                        
-                        <button 
-                            className={`${styles.carouselButton} ${styles.next}`}
-                            onClick={nextSlide}
-                            disabled={currentIndex >= maxIndex}
-                        >
-                            ›
-                        </button>
-                        
-                        <div 
-                            className={styles.carouselContainer}
+                    {hero.buttonText && (
+                        <Link
+                            href={hero.buttonUrl || '/produtos'}
+                            className={styles.botaoProdutos}
                             style={{
-                                transform: isMobile ? 'none' : `translateX(-${currentIndex * 330}px)`
+                                backgroundColor: layoutConfig?.theme?.primary || '#060748',
+                                borderRadius: layoutConfig?.theme?.borderRadius || '8px',
                             }}
                         >
-                            {produtosRecentes.map((produto, index) => (
-                                <ProdutoCard 
-                                    key={produto.id} 
-                                    produto={produto} 
-                                    isMobile={isMobile}
-                                    currentIndex={currentIndex}
-                                    index={index}
+                            {hero.buttonText}
+                        </Link>
+                    )}
+                </header>
+            )}
+
+            <main>
+                {recentProducts.enabled && (
+                    <section className={styles.section}>
+                        <h2
+                            className={styles.sectionTitle}
+                            style={{ cursor: isInlineEditMode ? 'pointer' : 'default' }}
+                            onClick={() => handleInlineTextEdit('recentProducts', 'title', recentProducts.title)}
+                        >
+                            {recentProducts.title || '🌟 Produtos Recentes'}
+                        </h2>
+                        
+                        <div className={styles.carousel}>
+                            <button 
+                                className={`${styles.carouselButton} ${styles.prev}`}
+                                onClick={prevSlide}
+                                disabled={currentIndex === 0}
+                            >
+                                ‹
+                            </button>
+                            
+                            <button 
+                                className={`${styles.carouselButton} ${styles.next}`}
+                                onClick={nextSlide}
+                                disabled={currentIndex >= maxIndex}
+                            >
+                                ›
+                            </button>
+                            
+                            <div 
+                                className={styles.carouselContainer}
+                                style={{
+                                    transform: isMobile ? 'none' : `translateX(-${currentIndex * 330}px)`
+                                }}
+                            >
+                                {produtosRecentes.map((produto, index) => (
+                                    <ProdutoCard 
+                                        key={produto.id} 
+                                        produto={produto} 
+                                        isMobile={isMobile}
+                                        currentIndex={currentIndex}
+                                        index={index}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div className={styles.carouselDots}>
+                            {Array.from({ length: totalDots }, (_, i) => (
+                                <button
+                                    key={i}
+                                    className={`${styles.dot} ${i === Math.floor(currentIndex / itemsPerView) ? styles.active : ''}`}
+                                    onClick={() => goToSlide(i * itemsPerView)}
                                 />
                             ))}
                         </div>
-                    </div>
-                    
-                    <div className={styles.carouselDots}>
-                        {Array.from({ length: totalDots }, (_, i) => (
-                            <button
-                                key={i}
-                                className={`${styles.dot} ${i === Math.floor(currentIndex / itemsPerView) ? styles.active : ''}`}
-                                onClick={() => goToSlide(i * itemsPerView)}
-                            />
-                        ))}
-                    </div>
-                </section>
+                    </section>
+                )}
             </main>
         </div>
     );

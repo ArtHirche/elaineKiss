@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
+import { useSiteLayout } from "@/hooks/useSiteLayout";
 import styles from "./hearder.module.css";
 import UserMenu from "@/components/auth/UserMenu";
 
@@ -21,6 +22,7 @@ export default function Page() {
   const pathname = usePathname();
   const { products } = useProducts();
   const { categories } = useCategories();
+  const { layoutConfig } = useSiteLayout();
   const activeCategories = categories.filter(cat => cat.isActive);
 
   // Close menu and suggestions on navigation
@@ -123,6 +125,28 @@ export default function Page() {
 
   return (
     <>
+      {layoutConfig?.announcement?.enabled && (
+        <div style={{
+          background: layoutConfig.announcement.backgroundColor || 'var(--primary-color, #e91e63)',
+          color: layoutConfig.announcement.textColor || '#ffffff',
+          textAlign: 'center',
+          padding: '8px 16px',
+          fontSize: '0.88rem',
+          fontWeight: 600,
+          letterSpacing: '0.3px',
+          zIndex: 1000,
+          position: 'relative',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+        }}>
+          {layoutConfig.announcement.linkUrl ? (
+            <Link href={layoutConfig.announcement.linkUrl} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {layoutConfig.announcement.text}
+            </Link>
+          ) : (
+            layoutConfig.announcement.text
+          )}
+        </div>
+      )}
       <header className={styles.header} ref={headerRef}>
         <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <img 
