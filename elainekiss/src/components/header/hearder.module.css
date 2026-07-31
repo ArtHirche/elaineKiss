@@ -44,7 +44,12 @@
     display: flex;
     gap: 50px;
     font-size: 16px;
-    color: var(--text-color);
+    color: var(--fore-ground);
+}
+
+.options a {
+    color: inherit;
+    text-decoration: none;
 }
 
 .link {
@@ -53,6 +58,7 @@
     align-items: center;
     cursor: pointer;
     gap: 10px;
+    color: var(--fore-ground);
 }
 
 .link_catg {
@@ -114,6 +120,11 @@
     align-items: center;
     cursor: pointer;
     gap: 10px;
+    background: transparent;
+    border: none;
+    color: var(--fore-ground);
+    font-size: inherit;
+    font-family: inherit;
 }
 
 .link_img {

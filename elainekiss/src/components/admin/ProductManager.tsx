@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import { imageService } from "@/lib/firebase/imageService";
 import { useCategories } from "@/hooks/useCategories";
+import VisualLayoutEditor from "./VisualLayoutEditor";
 import styles from "./ProductManager.module.css";
 
 export default function ProductManager() {
@@ -33,7 +34,7 @@ export default function ProductManager() {
     const [file, setFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false);
 
-    const [activeTab, setActiveTab] = useState<'manage' | 'details' | 'categories'>('manage');
+    const [activeTab, setActiveTab] = useState<'manage' | 'details' | 'categories' | 'layout'>('manage');
     const [searchQuery, setSearchQuery] = useState("");
     const [categoryFilter, setCategoryFilter] = useState("");
 
@@ -304,32 +305,43 @@ export default function ProductManager() {
                 >
                     📁 Categorias
                 </button>
-            </div>
-
-            {/* Barra de Filtros e Pesquisa */}
-            <div className={styles.filterBar}>
-                <input
-                    type="text"
-                    className={styles.filterInput}
-                    placeholder="🔍 Buscar produto por nome ou descrição..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <select
-                    className={styles.filterSelect}
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
+                <button
+                    type="button"
+                    className={`${styles.tabButton} ${activeTab === 'layout' ? styles.activeTabButton : ''}`}
+                    onClick={() => setActiveTab('layout')}
                 >
-                    <option value="">📁 Todas as Categorias</option>
-                    {categories.map(cat => (
-                        <option key={cat.slug} value={cat.name}>
-                            {cat.name}
-                        </option>
-                    ))}
-                </select>
+                    🎨 Editor de Layout
+                </button>
             </div>
 
-            {activeTab === 'categories' ? (
+            {activeTab === 'layout' ? (
+                <VisualLayoutEditor />
+            ) : (
+                <>
+                    {/* Barra de Filtros e Pesquisa */}
+                    <div className={styles.filterBar}>
+                        <input
+                            type="text"
+                            className={styles.filterInput}
+                            placeholder="🔍 Buscar produto por nome ou descrição..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <select
+                            className={styles.filterSelect}
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                        >
+                            <option value="">📁 Todas as Categorias</option>
+                            {categories.map((cat, idx) => (
+                                <option key={cat.id || `${cat.slug}-${idx}`} value={cat.name}>
+                                    {cat.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {activeTab === 'categories' ? (
                 /* ABA 3: Categorias */
                 <div className={styles.scrollListContainer}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', padding: '10px' }}>
@@ -355,8 +367,8 @@ export default function ProductManager() {
                         </div>
                     ) : (
                         <div className={styles.categoriesGrid}>
-                            {categories.map((category) => (
-                                <div key={category.id} className={styles.categoryCard}>
+                            {categories.map((category, idx) => (
+                                <div key={category.id || `${category.slug}-${idx}`} className={styles.categoryCard}>
                                     <div>
                                         <div className={styles.categoryCardHeader}>
                                             <h3 className={styles.categoryCardTitle}>{category.name}</h3>
@@ -600,8 +612,8 @@ export default function ProductManager() {
                                     required
                                 >
                                     <option value="">Selecione uma categoria</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.slug} value={cat.name}>
+                                    {categories.map((cat, idx) => (
+                                        <option key={cat.id || `${cat.slug}-${idx}`} value={cat.name}>
                                             {cat.name}
                                         </option>
                                     ))}
@@ -794,6 +806,8 @@ export default function ProductManager() {
                         </form>
                     </div>
                 </div>
+            )}
+            </>
             )}
         </div>
     );
