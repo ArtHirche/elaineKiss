@@ -144,7 +144,7 @@ export const DEFAULT_SITE_LAYOUT: SiteLayoutConfig = {
     imagePosition: "left",
   },
   recentProducts: {
-    enabled: true,
+    enabled: false,
     title: "🌟 Produtos Recentes",
     subtitle: "Confira as últimas novidades que acabaram de chegar na loja",
     maxItems: 8,

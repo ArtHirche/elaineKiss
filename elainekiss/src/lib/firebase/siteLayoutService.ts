@@ -14,8 +14,7 @@ export const siteLayoutService = {
       if (snapshot.exists()) {
         const data = snapshot.data() as SiteLayoutConfig;
         console.log('siteLayoutService: Configuração carregada com sucesso:', data);
-        // Garantir mesclagem com valores padrão caso existam novas chaves
-        return {
+        const merged: SiteLayoutConfig = {
           ...DEFAULT_SITE_LAYOUT,
           ...data,
           theme: { ...DEFAULT_SITE_LAYOUT.theme, ...(data.theme || {}) },
@@ -28,12 +27,24 @@ export const siteLayoutService = {
           sectionOrder: data.sectionOrder || DEFAULT_SITE_LAYOUT.sectionOrder,
           customPresets: data.customPresets || [],
         };
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('elainekiss_site_layout', JSON.stringify(merged));
+        }
+        return merged;
       }
 
-      console.log('siteLayoutService: Nenhum documento encontrado, usando padrão.');
+      console.log('siteLayoutService: Nenhum documento encontrado, tentando cache local...');
+      if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem('elainekiss_site_layout');
+        if (cached) return JSON.parse(cached);
+      }
       return DEFAULT_SITE_LAYOUT;
     } catch (error) {
       console.error('siteLayoutService: Erro ao carregar configurações de layout:', error);
+      if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem('elainekiss_site_layout');
+        if (cached) return JSON.parse(cached);
+      }
       return DEFAULT_SITE_LAYOUT;
     }
   },
@@ -46,10 +57,16 @@ export const siteLayoutService = {
         ...config,
         lastUpdated: new Date().toISOString(),
       };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('elainekiss_site_layout', JSON.stringify(configToSave));
+      }
       await setDoc(docRef, configToSave);
       console.log('siteLayoutService: Configurações salvas com sucesso!');
     } catch (error) {
       console.error('siteLayoutService: Erro ao salvar configurações de layout:', error);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('elainekiss_site_layout', JSON.stringify(config));
+      }
       throw error;
     }
   }
