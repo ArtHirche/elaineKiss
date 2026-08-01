@@ -95,15 +95,15 @@ export interface SiteLayoutConfig {
 
 export const DEFAULT_SITE_LAYOUT: SiteLayoutConfig = {
   theme: {
-    primary: "#e91e63",
-    primaryHover: "#c2185b",
-    secondary: "#9c27b0",
+    primary: "#060748",
+    primaryHover: "#3a3c85",
+    secondary: "#3a3c85",
     background: "#ffffff",
     cardBackground: "#f8f9fa",
     textColor: "#171717",
-    headerBackground: "#ffffff",
-    footerBackground: "#111827",
-    accentGradient: "linear-gradient(135deg, #f06292 0%, #ba68c8 100%)",
+    headerBackground: "#060748",
+    footerBackground: "#060748",
+    accentGradient: "linear-gradient(135deg, #060748 0%, #3a3c85 100%)",
     borderRadius: "16px",
   },
   announcement: {
