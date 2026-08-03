@@ -28,8 +28,8 @@ export const categorias = [
     slug: "chaveiro-croche",
   },
   {
-    nome: "Chaveiro gloss / Creme / Lenços",
-    slug: "chaveiro-gloss-creme-lencos",
+    nome: "Chaveiro Gloss / Creme / Lenço",
+    slug: "chaveiro-gloss-creme-lenco",
   },
   {
     nome: "Clips",
