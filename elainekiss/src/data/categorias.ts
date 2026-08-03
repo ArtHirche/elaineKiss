@@ -28,16 +28,12 @@ export const categorias = [
     slug: "chaveiro-croche",
   },
   {
-    nome: "Chaveiro Gloss",
-    slug: "chaveiro-gloss",
+    nome: "Chaveiro gloss / Creme / Lenços",
+    slug: "chaveiro-gloss-creme-lencos",
   },
   {
     nome: "Clips",
     slug: "clips",
-  },
-  {
-    nome: "Coleiras",
-    slug: "coleiras",
   },
   {
     nome: "Corrente de Óculos",
