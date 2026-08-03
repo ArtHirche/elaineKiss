@@ -8,6 +8,8 @@ import { useCategories } from "@/hooks/useCategories";
 import { getImageSrc } from "@/lib/imageUtils";
 import Link from "next/link";
 
+import { generateSlug } from "@/lib/firebase/categoryService";
+
 export default function Produtos() {
     const [selectedCategorias, setSelectedCategorias] = useState<string[]>([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -41,9 +43,15 @@ export default function Produtos() {
         }, 500);
     };
     
+    const selectedSlugs = selectedCategorias.map(c => generateSlug(c));
     const produtosFiltrados = selectedCategorias.length === 0 
         ? products 
-        : products.filter(produto => selectedCategorias.includes(produto.category));
+        : products.filter(produto => {
+            if (!produto.category) return false;
+            if (selectedCategorias.includes(produto.category)) return true;
+            const pSlug = generateSlug(produto.category);
+            return selectedSlugs.some(s => pSlug === s || pSlug.startsWith(s) || s.startsWith(pSlug));
+        });
 
     if (loading) {
         return (

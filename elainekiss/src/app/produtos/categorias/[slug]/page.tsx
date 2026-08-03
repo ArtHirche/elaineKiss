@@ -6,6 +6,8 @@ import { useCategories } from "@/hooks/useCategories";
 import styles from "../../../styles/produtos.module.css";
 import Link from "next/link";
 
+import { generateSlug } from "@/lib/firebase/categoryService";
+
 export default function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
     const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -38,11 +40,16 @@ export default function CategoriaPage({ params }: { params: Promise<{ slug: stri
         c.slug === slug || 
         c.slug === decodedSlug || 
         c.slug === decodedSlug.replace(/\s+/g, "-") ||
-        c.name.toLowerCase() === decodedSlug.toLowerCase()
+        c.name.toLowerCase() === decodedSlug.toLowerCase() ||
+        generateSlug(c.name) === generateSlug(decodedSlug)
     );
     
     // Filtrar produtos pela categoria
-    const produtosFiltrados = products.filter(p => p.category === categoriaAtual?.name);
+    const produtosFiltrados = products.filter(p => {
+        if (!p.category) return false;
+        if (p.category === categoriaAtual?.name) return true;
+        return categoriaAtual ? generateSlug(p.category) === generateSlug(categoriaAtual.name) : false;
+    });
 
     return (
         <div className={styles.container}>
