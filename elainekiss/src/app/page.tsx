@@ -108,45 +108,18 @@ export default function Home() {
 
     return (
         <div className={styles.container}>
-            {hero.enabled && (
+            {hero.enabled && hero.buttonText && (
                 <header className={styles.header}>
-                    <h1
-                        className={styles.title}
-                        style={{ cursor: isInlineEditMode ? 'pointer' : 'default' }}
-                        onClick={() => handleInlineTextEdit('hero', 'title', hero.title)}
-                        title={isInlineEditMode ? 'Clique para editar o título' : undefined}
+                    <Link
+                        href={hero.buttonUrl || '/produtos'}
+                        className={styles.botaoProdutos}
+                        style={{
+                            backgroundColor: layoutConfig?.theme?.primary || '#060748',
+                            borderRadius: layoutConfig?.theme?.borderRadius || '8px',
+                        }}
                     >
-                        {hero.title || 'Elaine Kiss'}
-                    </h1>
-                    <p
-                        className={styles.subtitle}
-                        style={{ cursor: isInlineEditMode ? 'pointer' : 'default' }}
-                        onClick={() => handleInlineTextEdit('hero', 'subtitle', hero.subtitle)}
-                        title={isInlineEditMode ? 'Clique para editar o subtítulo' : undefined}
-                    >
-                        {hero.subtitle || 'Acessórios únicos e artesanais com muito amor e carinho para você'}
-                    </p>
-
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
-                        <img
-                            src={hero.artisanImage || "/images/elaine_pic.jpg"}
-                            alt="Foto da artesã"
-                            className={styles.fotoArtesa}
-                        />
-                    </div>
-
-                    {hero.buttonText && (
-                        <Link
-                            href={hero.buttonUrl || '/produtos'}
-                            className={styles.botaoProdutos}
-                            style={{
-                                backgroundColor: layoutConfig?.theme?.primary || '#060748',
-                                borderRadius: layoutConfig?.theme?.borderRadius || '8px',
-                            }}
-                        >
-                            {hero.buttonText}
-                        </Link>
-                    )}
+                        {hero.buttonText}
+                    </Link>
                 </header>
             )}
 

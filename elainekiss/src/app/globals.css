@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #060748;
+  --foreground: #FED46D;
   --header-height: 64px;
 }
 
@@ -15,20 +15,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #060748;
+    --foreground: #FED46D;
   }
 }
 
-body {
-  background: #ffffff;
+html, body {
+  background-color: #060748 !important;
+  background: #060748 !important;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 /* Spacer to keep page content below the fixed header */
 .headerSpacer {
   height: var(--header-height);
+  background-color: #060748 !important;
+  margin: 0;
+  padding: 0;
 }
 
 @media (max-width: 768px) {
