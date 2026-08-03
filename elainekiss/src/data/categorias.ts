@@ -40,10 +40,6 @@ export const categorias = [
     slug: "corrente-de-oculos",
   },
   {
-    nome: "Cremes",
-    slug: "cremes",
-  },
-  {
     nome: "Escova de Cabelo",
     slug: "escova-de-cabelo",
   },
