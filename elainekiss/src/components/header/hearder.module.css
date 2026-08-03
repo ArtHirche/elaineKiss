@@ -7,7 +7,7 @@
 .header {
     width: 100%;
     background-color: var(--back-ground);
-    color: #000000;
+    color: var(--fore-ground);
     padding: 15px 30px;
     position: fixed;
     top: 0;
@@ -349,3 +349,191 @@
 .mobileSubMenuItem:hover {
     color: var(--fore-ground);
 }
+
+/* User Menu & Auth Status Indicator */
+.userMenuContainer {
+    position: relative;
+}
+
+.userProfileBtn {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    gap: 4px;
+    color: var(--fore-ground);
+    padding: 0;
+    font-family: inherit;
+}
+
+.avatarWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.userAvatarImg {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--fore-ground);
+}
+
+.onlineBadge {
+    position: absolute;
+    bottom: -1px;
+    right: -2px;
+    width: 10px;
+    height: 10px;
+    background-color: #10B981;
+    border: 2px solid var(--back-ground);
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+    animation: pulseBadge 2s infinite;
+}
+
+@keyframes pulseBadge {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.welcomeText {
+    font-size: 13px;
+    font-weight: 600;
+    color: #FED46D;
+    white-space: nowrap;
+}
+
+.accountSubtext {
+    font-size: 11px;
+    color: #FFEDBF;
+    opacity: 0.95;
+    white-space: nowrap;
+}
+
+.userDropdown {
+    position: absolute;
+    top: calc(100% + 14px);
+    right: -10px;
+    background-color: #060748;
+    border: 2px solid #FED46D;
+    border-radius: 12px;
+    padding: 16px;
+    min-width: 220px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+    z-index: 1010;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeInDropdown 0.15s ease-out;
+}
+
+@keyframes fadeInDropdown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.userDropdownHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.userDropdownAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #FED46D;
+    color: #060748;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.userDropdownAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.userDropdownInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.userDropdownName {
+    color: #FED46D;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.userDropdownEmail {
+    color: #E2E8F0;
+    font-size: 12px;
+    opacity: 0.95;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.statusTag {
+    color: #34D399;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.userDropdownDivider {
+    height: 1px;
+    background-color: rgba(254, 212, 109, 0.25);
+    margin: 2px 0;
+}
+
+.userDropdownLogoutBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 12px;
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #FCA5A5;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.userDropdownLogoutBtn:hover {
+    background-color: rgba(239, 68, 68, 0.35);
+    color: #FFFFFF;
+    border-color: rgba(239, 68, 68, 0.7);
+}
