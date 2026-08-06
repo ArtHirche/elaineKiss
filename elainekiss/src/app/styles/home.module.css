@@ -1,14 +1,19 @@
 .container {
     width: 100%;
     min-height: 100vh;
-    background-color: var(--site-bg, #eee);
+    background-image: url("/images/elaine_bela_e_a_fera_pc.png");
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
     color: var(--text-color, #171717);
-    padding: 40px 60px;
+    padding: 0 60px 40px;
+    margin-top: -2px;
 }
 
 .header {
     text-align: center;
-    margin-bottom: 60px;
+    padding-top: 20px;
+    margin-bottom: 30px;
 }
 
 .title {
@@ -25,23 +30,38 @@
     margin: 0 auto 30px;
 }
 
+
 .botaoProdutos {
-    display: inline-block;
-    padding: 15px 30px;
-    background-color: var(--primary-color, #060748);
-    color: white;
+    display: block;
+    width: fit-content;
+
+    margin-left: auto;
+    margin-right: 0;
+
+    padding: 14px 32px;
+
+    background-color: #FED46D;
+    color: #FED46D;
+
     text-decoration: none;
-    border-radius: var(--border-radius-custom, 8px);
+    border-radius: 30px;
+
     font-size: 16px;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    font-weight: 700;
+
+    border: 2px solid #060748;
     cursor: pointer;
+
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    transition: all 0.3s ease;
 }
 
 .botaoProdutos:hover {
-    background-color: var(--primary-hover, #3a3c85);
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(6, 7, 72, 0.15);
+    background-color: #ffffff;
+    color: #FED46D;
+
+    transform: scale(1.06);
+    box-shadow: 0 10px 25px rgba(254, 212, 109, 0.4);
 }
 
 .section {
@@ -78,6 +98,30 @@
 }
 
 @media (max-width: 768px) {
+    .container {
+        width: 100%;
+        min-height: 100vh;
+        background-image: url("/images/elaine_bela_e_a_fera_celular.png");
+        background-size: cover;
+        background-position: center top;
+        background-repeat: no-repeat;
+        color: var(--text-color, #171717);
+        padding: 0 60px 40px;
+        margin-top: -30px;
+    }
+
+     .botaoProdutos {
+        display: block;
+        width: fit-content;
+
+        margin: -125px auto 0 auto;
+
+        padding: 14px 32px;
+
+        position: relative;
+        z-index: 10;
+    }
+
     .carousel {
         width: 100%;
         max-width: 100%;
@@ -299,6 +343,28 @@
     }
 }
 
+@media (max-width: 1024px) {
+    .container {
+        background-image: url("/images/elaine_bela_e_a_fera_tablet.png");
+    }
+
+     .botaoProdutos {
+        display: block;
+        width: fit-content;
+
+        margin: 500px auto 0 auto;
+
+        padding: 20px;
+
+        position: relative;
+        z-index: 10;
+    }
+
+    .header {
+        padding-top: 200px;
+    }
+}
+
 @media (max-width: 768px) {
     .grid {
         grid-template-columns: repeat(2, 1fr);
@@ -306,7 +372,13 @@
     }
 
     .container {
-        padding: 20px;
+        padding: 0 15px 30px;
+        background-image: url("/images/elaine_bela_e_a_fera_celular_375x667px.png");
+    }
+
+    .header {
+        padding-top: 140px;
+        margin-bottom: 30px;
     }
 
     .title {
