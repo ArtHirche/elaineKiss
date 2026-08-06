@@ -33,7 +33,7 @@ html, body {
 .headerSpacer {
   height: var(--header-height);
   background-color: #060748 !important;
-  margin: 0;
+  margin-top: -60px;
   padding: 0;
 }
 
