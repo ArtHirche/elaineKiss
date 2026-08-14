@@ -7,39 +7,25 @@ export default function QuemSomos() {
         <h1 className={styles.title}>Quem Somos</h1>
         
         <div className={styles.aboutSection}>
-          <div className={styles.brandIntro}>
-            <h2 className={styles.brandName}>Elaine Kiss</h2>
-            <p className={styles.brandDescription}>
-              A Elaine Kiss é a minha marca para vender os produtos feitos de forma artesanal, 
-              tais como: Buttons, chaveiros, prendedores e muito mais!
-            </p>
-          </div>
-
           <div className={styles.personalStory}>
-            <h3 className={styles.storyTitle}>Um pouco sobre mim:</h3>
+            <h3 className={styles.storyTitle}>Um pouco sobre mim</h3>
             
             <div className={styles.storyContent}>
               <div className={styles.storyItem}>
                 <p className={styles.storyText}>
-                  Sou a Elaine, sou uma pessoa com <strong>TEA</strong> (Transtorno do Espectro Autista) e <strong>TDAH</strong>.
+                  Meu nome é Elaine Kiss. Em setembro de 2020, encontrei no artesanato o meu caminho profissional e a minha fonte de renda.
                 </p>
               </div>
 
               <div className={styles.storyItem}>
                 <p className={styles.storyText}>
-                  Comecei a fazer artesanato para conseguir trabalhar e ter minha renda.
+                  Como pessoa neurodivergente (<strong>TEA</strong>, <strong>DI</strong> e <strong>TDAH</strong>), coloco foco e dedicação em cada detalhe do que faço.
                 </p>
               </div>
 
               <div className={styles.storyItem}>
                 <p className={styles.storyText}>
-                  Já vendo há quase 4 anos e sempre busco entregar a melhor qualidade possível.
-                </p>
-              </div>
-
-              <div className={styles.storyItem}>
-                <p className={styles.storyText}>
-                  Faço todos os meus produtos de forma autônoma e original.
+                  Meus trabalhos são todos feitos manualmente e produzidos para cada cliente de maneira única e especial.
                 </p>
               </div>
             </div>
