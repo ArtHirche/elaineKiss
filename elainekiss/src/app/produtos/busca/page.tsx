@@ -83,26 +83,31 @@ function BuscaContent() {
         <div className={styles.grid}>
           {produtosFiltrados.map((produto) => (
             <div key={produto.id} className={styles.productCard}>
-              <h3 className={styles.productName}>
-                {produto.name}
-              </h3>
+              <Link 
+                href={`/produtos/${produto.id}`}
+                style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', flex: 1 }}
+              >
+                <h3 className={styles.productName}>
+                  {produto.name}
+                </h3>
 
-              <img 
-                className={styles.productImage} 
-                src={getImageSrc(produto.imageUrl)} 
-                alt={produto.name}
-                onError={(e) => {
-                  e.currentTarget.src = "/produtos/default.jpg";
-                }}
-              />
+                <img 
+                  className={styles.productImage} 
+                  src={getImageSrc(produto.imageUrl)} 
+                  alt={produto.name}
+                  onError={(e) => {
+                    e.currentTarget.src = "/produtos/default.jpg";
+                  }}
+                />
 
-              <p className={styles.productCategory}>
-                {produto.category}
-              </p>
+                <p className={styles.productCategory}>
+                  {produto.category}
+                </p>
 
-              <p className={styles.productPrice}>
-                R$ {produto.price.toFixed(2)}
-              </p>
+                <p className={styles.productPrice}>
+                  R$ {produto.price.toFixed(2)}
+                </p>
+              </Link>
 
               <Link
                 href={`/produtos/${produto.id}`}
