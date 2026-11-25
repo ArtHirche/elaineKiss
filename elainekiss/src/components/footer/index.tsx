@@ -22,7 +22,7 @@ export function Footer() {
 
                 <div className={styles.div}>
                     <h1 className={styles.h1}>Entre em Contato</h1>
-                    <p>+55 11 98097-9540</p>
+                    <p>+55 11 99861-9755</p>
                     <p>elainekiss11@hotmail.com</p>
                 </div>
 

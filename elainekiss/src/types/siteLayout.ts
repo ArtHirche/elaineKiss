@@ -153,7 +153,7 @@ export const DEFAULT_SITE_LAYOUT: SiteLayoutConfig = {
     copyrightText: "© Elaine Kiss - Todos os direitos reservados",
     showSocialLinks: true,
     instagramUrl: "https://instagram.com",
-    whatsappNumber: "5511999999999",
+    whatsappNumber: "5511998619755",
   },
   sectionOrder: ["announcement", "hero", "recentProducts", "promoBanner", "aboutUs"],
 };
