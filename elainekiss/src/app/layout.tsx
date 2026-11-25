@@ -43,7 +43,7 @@ export default function RootLayout({
             <CartProvider>
               {!isAuthRoute && <Header />}
 
-              {!isAuthRoute && <div className="headerSpacer" />}
+              !isAuthRoute && <div className="headerSpacer" />
 
               {children}
 

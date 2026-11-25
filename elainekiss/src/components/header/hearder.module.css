@@ -7,7 +7,7 @@
 .header {
     width: 100%;
     background-color: var(--back-ground);
-    color: var(--fore-ground);
+    color: black;
     padding: 15px 30px;
     position: fixed;
     top: 0;
@@ -536,4 +536,4 @@
     background-color: rgba(239, 68, 68, 0.35);
     color: #FFFFFF;
     border-color: rgba(239, 68, 68, 0.7);
-}
+}
