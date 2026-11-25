@@ -5,7 +5,7 @@ import styles from "./WhatsAppFloat.module.css";
 export default function WhatsAppFloat() {
   return (
     <a
-      href="https://api.whatsapp.com/send/?phone=5511979986804&text&type=phone_number&app_absent=0"
+      href="https://api.whatsapp.com/send/?phone=5511998619755&text&type=phone_number&app_absent=0"
       target="_blank"
       rel="noopener noreferrer"
       className={styles.whatsappFloat}

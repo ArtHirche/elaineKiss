@@ -22,7 +22,7 @@ export default function CartDrawer() {
         }).join(', ');
         
         const message = `Olá, estou interessado em ${productsList}`;
-        const whatsappUrl = `https://wa.me/5511979986804?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/5511998619755?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     };
 
